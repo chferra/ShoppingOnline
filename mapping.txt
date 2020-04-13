@@ -1,0 +1,68 @@
+- TUTTI GLI ID DEVONO AVERE LUNGHEZZA 5 (AUTO INCREMENTO)
+- RISPETTARE I VALORI NULLABLE DESCRITTI DALLO SCHEMA ER
+- UTILIZZARE COME "Collation" sempre "utf8mb4_unicode_ci"
+- NON ECCEDERE CON LE LUNGHEZZE
+
+
+
+-------------------------------------------------------------------------------------------------------------
+
+Utenti(ID, *CodIndirizzoPredefinito, *CodFotografia, nome, cognome, dataNascita, email, password, negoziante)
+
+	- "negoziante" è un flag (tinyint), true o false
+	- "email" deve avere il vincolo UNIQUE
+	
+-------------------------------------------------------------------------------------------------------------
+
+Indirizzo(ID, *CodUtente, destinatario, telefono, Stato, provincia, citta, via, nCivico, codPostale)
+	- "provincia" deve essere un char di 2 caratteri
+	- "codPostale" deve essere un char di 5 caratteri
+
+-------------------------------------------------------------------------------------------------------------
+
+Accesso(ID, *CodUtente, dataOra, IP)
+
+-------------------------------------------------------------------------------------------------------------
+
+Fotografia(ID, percorso, *CodNegozio, *CodProdotto)
+
+-------------------------------------------------------------------------------------------------------------
+
+Carrello(ID, *CodUtente, *CodNegozio)
+
+-------------------------------------------------------------------------------------------------------------
+
+Comprende(ID, *CodCarrello, *CodProdotto)
+
+-------------------------------------------------------------------------------------------------------------
+
+Ordine(ID, *CodCarrello, *CodIndirizzoConsegna, data/oraAcquisto, consegnaDomicilio, fattura)
+	- "consegnaDomicilio" è un flag (tinyint), true o false
+
+-------------------------------------------------------------------------------------------------------------
+
+Prodotto(ID, *CodUtente, *CodNegozio, nome, descrizione, prezzo)
+
+-------------------------------------------------------------------------------------------------------------
+
+Appartiene(*CODPRODOTTO, *CODCATEGORIA)
+
+-------------------------------------------------------------------------------------------------------------
+
+Categoria(ID, nome)
+
+-------------------------------------------------------------------------------------------------------------
+
+Caratteristica(ID, *CodProdotto, nome, valore)
+
+-------------------------------------------------------------------------------------------------------------
+
+Negozio(ID, *CodIndirizzo, nome)
+
+-------------------------------------------------------------------------------------------------------------
+
+Caratterizza(*CODNEGOZIO, *CODCATEGORIA)
+
+-------------------------------------------------------------------------------------------------------------
+
+Gestisce(*CODUTENTE, *CODNEGOZIO)
