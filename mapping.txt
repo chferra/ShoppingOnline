@@ -36,7 +36,7 @@ Comprende(ID, *CodCarrello, *CodProdotto)
 
 -------------------------------------------------------------------------------------------------------------
 
-Ordine(ID, *CodCarrello, *CodIndirizzoConsegna, data/oraAcquisto, consegnaDomicilio, fattura, dataOraConsegna)
+Ordine(ID, *CodCarrello, *CodIndirizzoConsegna, *CodNegozio, data/oraAcquisto, consegnaDomicilio, fattura, dataOraConsegna)
 	- "consegnaDomicilio" è un flag (tinyint), true o false
 	- dataOraConsegna è la preferenza specificata dal cliente, che può essere modificata dal sistema di schedulazione degli ordini o in seguito a un ritardo
 
@@ -63,7 +63,7 @@ Caratteristica(ID, *CodProdotto, nome, valore)
 
 -------------------------------------------------------------------------------------------------------------
 
-Negozio(ID, *CodIndirizzo, nome)
+Negozio(ID, *CodIndirizzo, *CodUtente, nome)
 
 -------------------------------------------------------------------------------------------------------------
 
