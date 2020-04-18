@@ -20,15 +20,11 @@ Indirizzo(ID, *CodUtente, destinatario, telefono, Stato, provincia, citta, via, 
 
 -------------------------------------------------------------------------------------------------------------
 
-Accesso(ID, *CodUtente, dataOra, IP)
-
--------------------------------------------------------------------------------------------------------------
-
 Fotografia(ID, percorso, *CodNegozio, *CodProdotto)
 
 -------------------------------------------------------------------------------------------------------------
 
-Carrello(ID, *CodUtente, *CodNegozio)
+Carrello(ID, *CodUtente, *CodNegozio, ordineEffettuato)
 
 -------------------------------------------------------------------------------------------------------------
 
@@ -36,14 +32,11 @@ Comprende(ID, *CodCarrello, *CodProdotto)
 
 -------------------------------------------------------------------------------------------------------------
 
-Ordine(ID, *CodCarrello, *CodIndirizzoConsegna, *CodNegozio, data/oraAcquisto, consegnaDomicilio, fattura, dataOraConsegna)
+Ordine(ID, *CodCarrello, *CodIndirizzoConsegna, data/oraAcquisto, consegnaDomicilio, fattura, stato, data/oraConsegna, confermaCliente, confermaNegoziante)
+
 	- "consegnaDomicilio" è un flag (tinyint), true o false
 	- dataOraConsegna è la preferenza specificata dal cliente, che può essere modificata dal sistema di schedulazione degli ordini o in seguito a un ritardo
-
--------------------------------------------------------------------------------------------------------------
-
-Avviso(ID, tipo, dataOra, messaggio)
-	- "tipo" può essere ritardo, imprevisto, ecc
+	- confermaCliente e confermaNegoziante sono dei valori booleani che indicano la conferma della data e ora di consegna da ciascuna parte (cliente e 	negoziante)
 
 -------------------------------------------------------------------------------------------------------------
 
@@ -59,16 +52,8 @@ Categoria(ID, nome)
 
 -------------------------------------------------------------------------------------------------------------
 
-Caratteristica(ID, *CodProdotto, nome, valore)
-
--------------------------------------------------------------------------------------------------------------
-
 Negozio(ID, *CodIndirizzo, *CodUtente, nome)
 
 -------------------------------------------------------------------------------------------------------------
 
 Caratterizza(*CODNEGOZIO, *CODCATEGORIA)
-
--------------------------------------------------------------------------------------------------------------
-
-Gestisce(*CODUTENTE, *CODNEGOZIO)
