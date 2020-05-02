@@ -28,7 +28,7 @@ Carrello(ID, *CodUtente, *CodNegozio, ordineEffettuato)
 
 -------------------------------------------------------------------------------------------------------------
 
-Comprende(ID, *CodCarrello, *CodProdotto)
+Comprende(ID, *CodCarrello, *CodProdotto, quantitaCliente, quantitaNegoziante, quantitaConfermata)
 
 -------------------------------------------------------------------------------------------------------------
 
