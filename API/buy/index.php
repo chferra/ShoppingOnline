@@ -50,16 +50,13 @@
                     VALUES ($consegnaDomicilio, $fattura, $IdUtente, $IdCarrello, $IdIndirizzo, $IdNegozio)";  
 
         $up = "UPDATE Carrelli SET ordineEffettuato = '1' WHERE ID = $IdCarrello";
-        $getIdOrdine = "SELECT ID FROM Ordini ORDER BY ID DESC LIMIT 1";
 
-        if (!($conn->query($ins) && $conn->query($up) && $ris = $conn->query($getIdOrdine))) 
+        if ($conn->query($up) && !($conn->query($ins)) 
             throw new Exception("Internal server error", 500);
-
-        $conn->close();
 
         http_response_code(200);
 
-        $response = array("IdOrdine" => $ris->fetch_array(MYSQLI_ASSOC)["ID"]);                    
+        $response = array("IdOrdine" => $conn->insert_id);                    
         echo json_encode($response);        
 
     } catch (Exception $ex) {
