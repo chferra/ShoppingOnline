@@ -17,10 +17,7 @@ CREATE TABLE Utenti (
 )
 
 
-
-
-
-Indirizzo(
+CREATE TABLE Indirizzo(
 	ID INT(11) PRIMARY KEY PRIMARY KEY AUTO_INCREMENT,
 	
 	destinatario VARCHAR(32), 
@@ -36,25 +33,11 @@ Indirizzo(
 		ON DELETE CASCADE
 		ON UPDATE CASCADE,
 )
-	- "provincia" deve essere un char di 2 caratteri
-	- "codPostale" deve essere un char di 5 caratteri
 
--------------------------------------------------------------------------------------------------------------
 
-Accesso(ID, 
 
-	data DATE NOT NULL,
-	Ora TIME NOT NULL, 
-	IP INT(12) NOT NULL,
 
-	*CodUtente REFERENCES Utenti(ID)
-		ON DELETE CASCADE
-		ON UPDATE CASCADE,
-) 
-
--------------------------------------------------------------------------------------------------------------
-
-Fotografia(
+CREATE TABLE Fotografia(
 	 ID INT(11) PRIMARY KEY,
 	 percorso VARCHAR(32) NOT NULL,
 	 
@@ -67,9 +50,9 @@ Fotografia(
 		ON UPDATE CASCADE,
  )
 
--------------------------------------------------------------------------------------------------------------
 
-Carrello(
+
+CREATE TABLE Carrello(
 	 ID INT(11) PRIMARY KEY,
 	 
 	 *CodUtente REFERENCES Utenti(ID)
@@ -78,30 +61,39 @@ Carrello(
 	 *CodNegozio REFERENCES Negozio(ID)
 		ON DELETE CASCADE
 		ON UPDATE CASCADE,
+		
+	ordineEffettuato BOOLEAN
  )
 
--------------------------------------------------------------------------------------------------------------
 
-Comprende(
+
+CREATE TABLE Comprende(
 	ID INT(11) PRIMARY KEY,
-	*CodNegozio REFERENCES Carrello(ID)
+	*CodNegozio REFERENCES Negozio(ID)
+		ON DELETE CASCADE
+		ON UPDATE CASCADE,
+	*CodCarrello REFERENCES Carrello(ID)
 		ON DELETE CASCADE
 		ON UPDATE CASCADE,
 	*CodProdotto REFERENCES Prodotto(ID)
 		ON DELETE CASCADE
 		ON UPDATE CASCADE,
+	quantitaCliente INT(10), 
+	quantitaNegoziante INT(11), 
+	quantitaConfermata INT(11)
 )
 
--------------------------------------------------------------------------------------------------------------
 
-Ordine(
+
+CREATE TABLE  Ordine(
 	ID INT(11) PRIMARY KEY,
-	dataAcquisto DATE,
-	oraAcquisto TIME, 
-	dataConsegna DATE,
-	oraConsegna TIME,
+	dataOraAcquisto DATETIME,
+	dataOraConsegna DATETIME,
 	consegnaDomicilio BOOLEAN, 
-	fattura VARCHAR(32), ??
+	fattura VARCHAR(32), 
+	stato VARCHAR(32), 
+	confermaCliente BOOLEAN, 
+	confermaNegoziante BOOLEAN,
 	
 	*CodCarrello REFERENCES Carrello(ID)
 		ON DELETE CASCADE
@@ -111,11 +103,9 @@ Ordine(
 		ON UPDATE CASCADE,
 	
 )
-	- "consegnaDomicilio" è un flag (tinyint), true o false
 
--------------------------------------------------------------------------------------------------------------
 
-Prodotto(
+CREATE TABLE Prodotto(
 	ID INT(11) PRIMARY KEY,
 	nome VARCHAR(32), 
 	descrizione VARCHAR(32), 
@@ -129,9 +119,9 @@ Prodotto(
 		ON UPDATE CASCADE,
 )
 
--------------------------------------------------------------------------------------------------------------
 
-Appartiene(
+
+CREATE TABLE Appartiene(
 	*CODPRODOTTO REFERENCES Prodotto(ID)
 		ON DELETE CASCADE
 		ON UPDATE CASCADE,
@@ -141,17 +131,17 @@ Appartiene(
 
 )
 
--------------------------------------------------------------------------------------------------------------
 
-Categoria(
+
+CREATE TABLE Categoria(
 
 	ID INT(11) PRIMARY KEY, 
 	nome VARCHAR(32), 
 )
 
--------------------------------------------------------------------------------------------------------------
 
-Caratteristica(
+
+CREATE TABLE Caratteristica(
 	ID INT(11) PRIMARY KEY, 
 	nome VARCHAR(32), 
 	valore INT(10) ?,
@@ -164,9 +154,9 @@ Caratteristica(
 		ON UPDATE CASCADE,
 )
 
--------------------------------------------------------------------------------------------------------------
 
-Negozio(
+
+CREATE TABLE Negozio(
 	ID INT(11) PRIMARY KEY,  
 	nome VARCHAR(32), 
 	
@@ -175,9 +165,9 @@ Negozio(
 		ON UPDATE CASCADE,
 )
 
--------------------------------------------------------------------------------------------------------------
 
-Caratterizza(
+
+CREATE TABLE Caratterizza(
 	*CodNegozio REFERENCES Negozio(ID)
 		ON DELETE CASCADE
 		ON UPDATE CASCADE,
@@ -186,13 +176,5 @@ Caratterizza(
 		ON UPDATE CASCADE,
 )
 
--------------------------------------------------------------------------------------------------------------
 
-Gestisce(
-	*CodUtente REFERENCES Utenti(ID)
-		ON DELETE CASCADE
-		ON UPDATE CASCADE,
-	*CodNegozio REFERENCES negozio(ID)
-		ON DELETE CASCADE
-		ON UPDATE CASCADE,
- )
+
