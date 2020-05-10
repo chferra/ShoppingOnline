@@ -6,6 +6,8 @@ CREATE TABLE Utenti(
   email VARCHAR(32) NOT NULL,
   password VARCHAR(32) NOT NULL,
   negoziante tinyint(1) NOT NULL,
+  CodIndirizzoPredefinito INT(11),
+  CodFotografia INT(11),
   FOREIGN KEY (CodIndirizzoPredefinito) REFERENCES Indirizzi(ID) 
 	ON DELETE CASCADE 
 	ON UPDATE CASCADE,
@@ -26,7 +28,8 @@ CREATE TABLE Indirizzo(
 	via VARCHAR(10), 
 	nCivico INT(2), 
 	codPostale VARCHAR(5),
-	*CodUtente INT(11) REFERENCES Utenti(ID)
+	CodUtente INT(11),
+	FOREIGN KEY (CodUtente) REFERENCES Utenti(ID)
 		ON DELETE CASCADE
 		ON UPDATE CASCADE
 );
@@ -35,35 +38,42 @@ CREATE TABLE Indirizzo(
 CREATE TABLE Fotografia(
 	 ID INT(11) PRIMARY KEY,
 	 percorso VARCHAR(32) NOT NULL,
-	 *CodNegozio INT(11) REFERENCES Negozio(ID),
-	 *CodProdotto INT(11) REFERENCES Prodotto(ID)
+	 CodNegozio INT(11),
+	 CodProdotto INT(11),
+	 FOREIGN KEY (CodNegozio) REFERENCES Negozio(ID),
+	 FOREIGN KEY (CodProdotto) REFERENCES Prodotto(ID)
  );
 
 
 CREATE TABLE Carrello(
 	 ID INT(11) PRIMARY KEY,
 	 
-	 *CodUtente INT(11) REFERENCES Utenti(ID)
+	 CodUtente INT(11),
+	 FOREIGN KEY (CodUtente) REFERENCES Utenti(ID)
 		ON DELETE CASCADE
 		ON UPDATE CASCADE,
-	 *CodNegozio INT(11) REFERENCES Negozio(ID)
+	 CodNegozio INT(11), 
+	 FOREIGN KEY (CodNegozio) REFERENCES Negozio(ID)
 		ON DELETE CASCADE
 		ON UPDATE CASCADE,
 		
-	ordineEffettuato BOOLEAN
+	ordineEffettuato TINYINT(1)
  );
 
 
 
 CREATE TABLE Comprende(
 	ID INT(11) PRIMARY KEY,
-	*CodNegozio INT(11) REFERENCES Negozio(ID)
+	CodNegozio INT(11),
+	FOREIGN KEY (CodNegozio) REFERENCES Negozio(ID)
 		ON DELETE CASCADE
 		ON UPDATE CASCADE,
-	*CodCarrello INT(11) REFERENCES Carrello(ID)
+	CodCarrello INT(11),
+	FOREIGN KEY (CodCarrello) REFERENCES Carrello(ID)
 		ON DELETE CASCADE
 		ON UPDATE CASCADE,
-	*CodProdotto INT(11) REFERENCES Prodotto(ID)
+	CodProdotto INT(11), 
+	FOREIGN KEY (CodCarrello) REFERENCES Prodotto(ID)
 		ON DELETE CASCADE
 		ON UPDATE CASCADE,
 	quantitaCliente INT(10), 
@@ -83,10 +93,12 @@ CREATE TABLE  Ordine(
 	confermaCliente BOOLEAN, 
 	confermaNegoziante BOOLEAN,
 	
-	*CodCarrello INT(11) REFERENCES Carrello(ID)
+	CodCarrello INT(11), 
+	 REFERENCES Carrello(ID)
 		ON DELETE CASCADE
 		ON UPDATE CASCADE,
-	*CodIndirizzoConsegna INT(11) REFERENCES Indirizzo(ID)
+	CodIndirizzoConsegna INT(11), 
+	FOREIGN KEY (CodIndirizzoConsegna) REFERENCES Indirizzo(ID)
 		ON DELETE CASCADE
 		ON UPDATE CASCADE
 	
@@ -99,10 +111,12 @@ CREATE TABLE Prodotto(
 	descrizione VARCHAR(32), 
 	prezzo INT(10),
 	
-	*CodUtente INT(11) REFERENCES Utenti(ID)
+	CodUtente INT(11), 
+	FOREIGN KEY (CodUtente) REFERENCES Utenti(ID)
 		ON DELETE CASCADE
 		ON UPDATE CASCADE,
-	*CodNegozio INT(11) REFERENCES negozio(ID)
+	CodNegozio INT(11),
+	FOREIGN KEY (CodUtente) REFERENCES negozio(ID)
 		ON DELETE CASCADE
 		ON UPDATE CASCADE
 );
@@ -110,10 +124,12 @@ CREATE TABLE Prodotto(
 
 
 CREATE TABLE Appartiene(
-	*CODPRODOTTO INT(11) REFERENCES Prodotto(ID)
+	CODPRODOTTO INT(11),
+	FOREIGN KEY (CODPRODOTTO) REFERENCES Prodotto(ID)
 		ON DELETE CASCADE
 		ON UPDATE CASCADE,
-	*CODCATEGORIA INT(11) REFERENCES Gategoria(ID)
+	CODCATEGORIA INT(11), 
+	FOREIGN KEY(CODCATEGORIA) REFERENCES Gategoria(ID)
 		ON DELETE CASCADE
 		ON UPDATE CASCADE
 
@@ -134,10 +150,12 @@ CREATE TABLE Caratteristica(
 	nome VARCHAR(32), 
 	valore INT(10),
 	
-	*CODPRODOTTO INT(11) REFERENCES Prodotto(ID)
+	CODPRODOTTO INT(11), 
+	FOREIGN KEY(CODPRODOTTO) REFERENCES Prodotto(ID)
 		ON DELETE CASCADE
 		ON UPDATE CASCADE,
-	*CodUtente INT(11) REFERENCES Utenti(ID)
+	CodUtente INT(11), 
+	FOREIGN KEY(CodUtente) REFERENCES Utenti(ID)
 		ON DELETE CASCADE
 		ON UPDATE CASCADE
 );
@@ -148,7 +166,8 @@ CREATE TABLE Negozio(
 	ID INT(11) PRIMARY KEY,  
 	nome VARCHAR(32), 
 	
-	*CodIndirizzo INT(11) REFERENCES Indirizzo(ID)
+	CodIndirizzo INT(11), 
+	FOREIGN KEY(CodIndirizzo) REFERENCES Indirizzo(ID)
 		ON DELETE CASCADE
 		ON UPDATE CASCADE
 );
@@ -156,10 +175,12 @@ CREATE TABLE Negozio(
 
 
 CREATE TABLE Caratterizza(
-	*CodNegozio INT(11) REFERENCES Negozio(ID)
+	CodNegozio INT(11), 
+	FOREIGN KEY(CodNegozio) REFERENCES Negozio(ID)
 		ON DELETE CASCADE
 		ON UPDATE CASCADE,
-	*CodCategoria INT(11) REFERENCES Gategoria(ID)
+	CodCategoria INT(11), 
+	FOREIGN KEY(CodCategoria) REFERENCES Gategoria(ID)
 		ON DELETE CASCADE
 		ON UPDATE CASCADE
 );
