@@ -46,6 +46,9 @@ public class UserResource {
     @Path("/login")
     public Response login(@QueryParam("email")String email, @QueryParam("password")String password) {
         try {
+            if (email == null || email.isEmpty() || password == null || password.isEmpty())
+                throw new WebApplicationException(Response.Status.BAD_REQUEST);  
+                
             ResultSet rs = DatabaseConnector.getIstance().query("SELECT * FROM utenti WHERE email='" + email + "' AND password='" + DigestUtils.md5Hex(password) + "'");
             if (!rs.next()) 
                 throw new WebApplicationException(Response.Status.UNAUTHORIZED);          
