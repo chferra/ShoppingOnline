@@ -1,4 +1,5 @@
-me\login\UserResource.class
-ApplicationConfig.class
+me\resources\UserResource$1.class
+me\resources\UserResource.class
+me\negozio\Negozio.class
 db\DatabaseConnector.class
-me\login\UserResource$1.class
+me\resources\ApplicationConfig.class

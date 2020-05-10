@@ -5,7 +5,6 @@
  */
 package me.negozio;
 
-import me.login.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import db.DatabaseConnector;
@@ -23,7 +22,7 @@ import org.apache.commons.codec.digest.DigestUtils;
  *
  * @author Samuele Peduzz
  */
-@Path("/")
+@Path("/negozio/me")
 public class Negozio {
 
     @Context
@@ -37,7 +36,7 @@ public class Negozio {
 
     @POST
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("/negozio/me/inserisciNegozio/")
+    @Path("/inserisciNegozio")
     public Response insertNegozio(@FormParam("nome")String nome, @FormParam("codIndirizzo")String codIndirizzo) {
         try {
             if (nome == null || nome.isEmpty() || codIndirizzo == null || codIndirizzo.isEmpty())
@@ -57,7 +56,9 @@ public class Negozio {
            throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR); 
         } 
     }
-    
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/eliminaNegozio")
     public Response deleteNegozio(@QueryParam("ID")String ID) {
         try {
             if (ID == null || ID.isEmpty())
