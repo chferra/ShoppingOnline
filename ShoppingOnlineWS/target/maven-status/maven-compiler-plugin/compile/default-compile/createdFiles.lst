@@ -1,3 +1,4 @@
 me\login\UserResource.class
+ApplicationConfig.class
 db\DatabaseConnector.class
-me\login\ApplicationConfig.class
+me\login\UserResource$1.class
