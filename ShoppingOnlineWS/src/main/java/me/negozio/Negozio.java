@@ -35,22 +35,35 @@ public class Negozio {
     public Negozio() {
     }
 
-    /**
-     * Retrieves representation of an instance of war.UserResource
-     * @return an instance of java.lang.String
-     */
     @POST
-    //@Produces(MediaType.APPLICATION_JSON)
-    //@Consumes(MediaType.APPLICATION_JSON)
-    //@Path("/login")
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/negozio/me/inserisciNegozio/")
-    public Response insertNegozio(@QueryParam("nome")String nome, @QueryParam("codIndirizzo")String codIndirizzo) {
+    public Response insertNegozio(@FormParam("nome")String nome, @FormParam("codIndirizzo")String codIndirizzo) {
         try {
             if (nome == null || nome.isEmpty() || codIndirizzo == null || codIndirizzo.isEmpty())
                 throw new WebApplicationException(Response.Status.BAD_REQUEST);  
                 
             ResultSet rs = DatabaseConnector.getIstance().query("INSERT INTO Negozio (*CodIndirizzo, nome) VALUES (" + codIndirizzo + "," + nome + ")");
+            if (!rs.next()) 
+                throw new WebApplicationException(Response.Status.UNAUTHORIZED);          
+            
+            String cookie = "sadasdasfw34fa";
+            return Response
+                .status(Response.Status.OK)
+                .entity(new ObjectMapper().writeValueAsString(cookie))
+                .build();
+            
+       } catch (SQLException | JsonProcessingException ex) {
+           throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR); 
+        } 
+    }
+    
+    public Response deleteNegozio(@QueryParam("ID")String ID) {
+        try {
+            if (ID == null || ID.isEmpty())
+                throw new WebApplicationException(Response.Status.BAD_REQUEST);  
+                
+            ResultSet rs = DatabaseConnector.getIstance().query("DELETE FROM Negozio WHERE ID = " + ID);
             if (!rs.next()) 
                 throw new WebApplicationException(Response.Status.UNAUTHORIZED);          
             
