@@ -43,7 +43,7 @@
 
         
         $ins = "INSERT INTO Prodotto (nome, prezzo, categoria, descrizione, immagine, codNegozio)
-				VALUES ($nome, $prezzo, $categoria, $descrizione, $pathImmagine, $codNegozio);)";  
+				VALUES ($nome, $prezzo, $categoria, $descrizione, $pathImmagine, $codNegozio);";  
 
         
 
