@@ -38,7 +38,7 @@ public class UploadImage {
      * Retrieves representation of an instance of war.UserResource
      * @return an instance of java.lang.String
      */
-    @GET
+    @POST
 
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/uploadImage")
@@ -51,10 +51,9 @@ public class UploadImage {
             if (!rs.next()) 
                 throw new WebApplicationException(Response.Status.UNAUTHORIZED);          
             
-            String cookie = "sadasdasfw34fa";
+            
             return Response
-                .status(Response.Status.OK)
-                .entity(new ObjectMapper().writeValueAsString(cookie))
+                .status(Response.Status.OK)                
                 .build();
             
        } catch (SQLException | JsonProcessingException ex) {

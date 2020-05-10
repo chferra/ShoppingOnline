@@ -44,8 +44,8 @@ public class addProdotto {
     //@Path("/login")
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/addProdotto")
-    public Response addProdotto(@QueryParam("codNegozio")Integer codNegozio, @QueryParam("nome")String nome, @QueryParam("prezzo")Integer prezzo,
-            @QueryParam("categoria")String categoria, @QueryParam("descrizione")String descrizione, @QueryParam("pathImmagine")String pathImmagine) {
+    public Response addProdotto(@FormParam("codNegozio")Integer codNegozio, @FormParam("nome")String nome, @FormParam("prezzo")Integer prezzo,
+            @FormParam("categoria")String categoria, @FormParam("descrizione")String descrizione, @FormParam("pathImmagine")String pathImmagine) {
         try {
             if (codNegozio == null || codNegozio.toString().isEmpty() || nome == null || nome.isEmpty() || prezzo == null || prezzo.toString().isEmpty()
                     || categoria == null || categoria.isEmpty() || descrizione == null || descrizione.isEmpty() || pathImmagine == null || pathImmagine.isEmpty())
