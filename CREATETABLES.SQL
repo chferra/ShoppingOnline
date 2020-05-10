@@ -1,19 +1,17 @@
 CREATE TABLE Utenti(
-	ID INT(11) PRIMARY KEY AUTO_INCREMENT,
-	nome VARCHAR(11) NOT NULL,
-	cognome VARCHAR(11) NOT NULL, 
-	dataNascita DATE NOT NULL,
-	email VARCHAR(32) NOT NULL, 
-	password VARCHAR(32) NOT NULL, 
-	negoziante tinyint(1),
-	CodIndirizzoPredefinito INT(11),
-	CONSTRAINT Ind FOREIGN KEY (CodIndirizzoPredefinito) REFERENCES Indirizzo(ID)
-		ON DELETE CASCADE
-		ON UPDATE CASCADE,
-	CodFotografia INT(11),
-	CONSTRAINT Fot FOREIGN KEY (CodFotografia) REFERENCES Fotografia(ID)
-		ON DELETE CASCADE
-		ON UPDATE CASCADE
+  ID INT(8) PRIMARY KEY AUTO_INCREMENT,
+  nome VARCHAR(16) NOT NULL,
+  cognome VARCHAR(16) NOT NULL,
+  dataNascita DATE NOT NULL,
+  email VARCHAR(32) NOT NULL,
+  password VARCHAR(32) NOT NULL,
+  negoziante tinyint(1) NOT NULL,
+  FOREIGN KEY (CodIndirizzoPredefinito) REFERENCES Indirizzi(ID) 
+	ON DELETE CASCADE 
+	ON UPDATE CASCADE,
+  FOREIGN KEY (CodFotografia) REFERENCES Fotografie(ID) 
+	ON DELETE CASCADE
+	ON UPDATE CASCADE
 );
 
 
