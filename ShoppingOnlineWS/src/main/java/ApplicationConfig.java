@@ -35,5 +35,5 @@ public class ApplicationConfig extends Application {
         resources.add(resources.StoreResource.class);
         resources.add(resources.UserResource.class);
     }
-    
+
 }
