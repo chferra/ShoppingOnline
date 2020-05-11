@@ -1,4 +1,6 @@
-me\login\UserResource.class
+utils\ExtendableBean.class
+resources\ProductResource.class
 ApplicationConfig.class
-db\DatabaseConnector.class
-me\login\UserResource$1.class
+resources\UserResource.class
+utils\DatabaseConnector.class
+resources\StoreResource.class
