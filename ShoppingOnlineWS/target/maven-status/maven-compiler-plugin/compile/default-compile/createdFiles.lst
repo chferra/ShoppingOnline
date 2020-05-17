@@ -1,1 +1,6 @@
+utils\ExtendableBean.class
+resources\ProductResource.class
 ApplicationConfig.class
+resources\UserResource.class
+utils\DatabaseConnector.class
+resources\StoreResource.class
