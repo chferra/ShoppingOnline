@@ -5,6 +5,8 @@
  */
 package resources;
 
+import authentication.Authenticated;
+import authentication.SimplePrincipal;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.sql.PreparedStatement;
@@ -35,10 +37,15 @@ public class StoreResource {
     public StoreResource() {
     }
 
+    @Authenticated
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response registerStore(String jsonBody) {
+    public Response registerStore(String jsonBody, @Context SecurityContext principal) {
+        ((SimplePrincipal)principal.getUserPrincipal()).getNegoziante();
+        ((SimplePrincipal)principal.getUserPrincipal()).getId();
+        
+        
         if (!DatabaseConnector.getIstance().isConnected())
             throw new WebApplicationException("failed to connect to db", 500);
             

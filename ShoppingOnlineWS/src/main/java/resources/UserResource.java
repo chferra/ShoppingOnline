@@ -5,6 +5,7 @@
  */
 package resources;
 
+import authentication.JwtAuthenticationService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.sql.PreparedStatement;
@@ -57,15 +58,25 @@ public class UserResource {
             if (!rs.next()) 
                 throw new WebApplicationException(Response.Status.UNAUTHORIZED);          
             
-            Map<String, String> response = new HashMap();
-            response.put("cookie", "asdasdasdas");
-            
             return Response
                 .status(Response.Status.OK)
-                .entity(new ObjectMapper().writeValueAsString(response))
+                .cookie(new NewCookie(
+                        "panDiStelle",
+                        JwtAuthenticationService.getInstance().generateToken(email, rs.getInt("ID"), rs.getBoolean("negoziante"), context),
+                        null, // the URI path for which the cookie is valid
+                        null, // the host domain for which the cookie is valid. TODO: should probably set this
+                        NewCookie.DEFAULT_VERSION, // the version of the specification to which the cookie complies
+                        null, // the comment
+                        // No max-age and expiry set, cookie expires when the browser gets closed
+                        NewCookie.DEFAULT_MAX_AGE, // the maximum age of the cookie in seconds
+                        null, // the cookie expiry date
+                        false, // specifies whether the cookie will only be sent over a secure connection
+                        true // if {@code true} make the cookie HTTP only
+                
+                ))
                 .build();
             
-       } catch (SQLException | JsonProcessingException ex) {
+       } catch (SQLException ex) {
            throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR); 
         } 
     }
