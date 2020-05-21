@@ -22,7 +22,7 @@ public class DatabaseConnector {
     
     private Connection conn;
     private boolean connected = false;
-    private final String url = "jdbc:mysql://localhost:3306/shoppingonline";
+    private final String url = "jdbc:mysql://localhost:3306/spesaonline";
     private final String username = "root";
     private final String password = "";
     

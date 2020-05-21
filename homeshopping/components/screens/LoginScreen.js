@@ -79,7 +79,7 @@ export default class LoginScreen extends Component {
                     />
 
                     <View style={{marginTop:'5%'}} />
-                    <Text style={{color: 'white', textAlign: 'right'}} onPress={() => Linking.openURL('http://google.com')}  >
+                    <Text style={{color: 'white', textAlign: 'right'}} onPress={() => navigate('ResetPassword') }  >
                         Forgot your password?
                     </Text>    
                     <View style={{marginTop:'10%'}} />
