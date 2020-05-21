@@ -1,0 +1,59 @@
+- TUTTI GLI ID DEVONO AVERE LUNGHEZZA 5 (AUTO INCREMENTO)
+- RISPETTARE I VALORI NULLABLE DESCRITTI DALLO SCHEMA ER
+- UTILIZZARE COME "Collation" sempre "utf8mb4_unicode_ci"
+- NON ECCEDERE CON LE LUNGHEZZE
+
+
+
+-------------------------------------------------------------------------------------------------------------
+
+Utenti(ID, *CodIndirizzoPredefinito, *CodFotografia, nome, cognome, dataNascita, email, password, negoziante)
+
+	- "negoziante" è un flag (tinyint), true o false
+	- "email" deve avere il vincolo UNIQUE
+	
+-------------------------------------------------------------------------------------------------------------
+
+Indirizzo(ID, *CodUtente, destinatario, telefono, Stato, provincia, citta, via, nCivico, codPostale)
+	- "provincia" deve essere un char di 2 caratteri
+	- "codPostale" deve essere un char di 5 caratteri
+
+-------------------------------------------------------------------------------------------------------------
+
+Fotografia(ID, percorso, *CodNegozio, *CodProdotto)
+
+-------------------------------------------------------------------------------------------------------------
+
+Carrello(ID, *CodUtente, *CodNegozio, ordineEffettuato)
+
+-------------------------------------------------------------------------------------------------------------
+
+Comprende(ID, *CodCarrello, *CodProdotto, quantitaCliente, quantitaNegoziante, quantitaConfermata)
+
+-------------------------------------------------------------------------------------------------------------
+
+Ordine(ID, *CodCarrello, *CodIndirizzoConsegna, data/oraAcquisto, consegnaDomicilio, fattura, stato, data/oraConsegna, confermaCliente, confermaNegoziante)
+
+	- "consegnaDomicilio" è un flag (tinyint), true o false
+	- dataOraConsegna è la preferenza specificata dal cliente, che può essere modificata dal sistema di schedulazione degli ordini o in seguito a un ritardo
+	- confermaCliente e confermaNegoziante sono dei valori booleani che indicano la conferma della data e ora di consegna da ciascuna parte (cliente e 	negoziante)
+
+-------------------------------------------------------------------------------------------------------------
+
+Prodotto(ID, *CodUtente, *CodNegozio, nome, descrizione, prezzo)
+
+-------------------------------------------------------------------------------------------------------------
+
+Appartiene(*CODPRODOTTO, *CODCATEGORIA)
+
+-------------------------------------------------------------------------------------------------------------
+
+Categoria(ID, nome)
+
+-------------------------------------------------------------------------------------------------------------
+
+Negozio(ID, *CodIndirizzo, *CodUtente, nome)
+
+-------------------------------------------------------------------------------------------------------------
+
+Caratterizza(*CODNEGOZIO, *CODCATEGORIA)

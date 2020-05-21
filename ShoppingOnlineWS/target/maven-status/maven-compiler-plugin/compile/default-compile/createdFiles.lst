@@ -1,12 +1,6 @@
-authentication\AuthenticationFilter.class
-authentication\JwtAuthenticationService.class
+utils\ExtendableBean.class
 resources\ProductResource.class
 ApplicationConfig.class
-authentication\AuthenticationException.class
-authentication\AuthenticationFilter$1.class
 resources\UserResource.class
-resources\StoreResource.class
-authentication\Authenticated.class
-utils\ExtendableBean.class
 utils\DatabaseConnector.class
-authentication\SimplePrincipal.class
+resources\StoreResource.class
