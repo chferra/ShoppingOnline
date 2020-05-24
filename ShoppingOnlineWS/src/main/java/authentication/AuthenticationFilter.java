@@ -1,6 +1,7 @@
 package authentication;
 
 import io.jsonwebtoken.Claims;
+import java.net.Authenticator;
 import javax.annotation.Priority;
 import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.Priorities;
@@ -11,7 +12,6 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.ext.Provider;
 import java.security.Principal;
-import java.util.Objects;
 import java.util.Optional;
 
 
@@ -19,15 +19,18 @@ import java.util.Optional;
 @Authenticated
 @Priority(Priorities.AUTHENTICATION)
 
-public abstract class AuthenticationFilter implements ContainerRequestFilter {
+public class AuthenticationFilter implements ContainerRequestFilter {
 
     public final String authorizationHeaderSchema;
     public final String authenticationCookieName;
 
-    protected AuthenticationFilter() {
+    public AuthenticationFilter() {
         this.authorizationHeaderSchema = "Bearer";
         this.authenticationCookieName = "panDiStelle";
+        System.out.println("okay");
+        //throw new Exception("ok");
     }
+    
     @Override
     public void filter(ContainerRequestContext requestContext) {
         
@@ -37,7 +40,7 @@ public abstract class AuthenticationFilter implements ContainerRequestFilter {
         if(!claims.isPresent())
             throw new NotAuthorizedException("A valid authorization header or cookie must be provided");
 
-        final SimplePrincipal simplePrincipal = new SimplePrincipal(claims.get().getSubject(), claims.get().get("negoziante", boolean.class), claims.get().get("id", int.class));
+        final SimplePrincipal simplePrincipal = new SimplePrincipal(claims.get().getSubject(), claims.get().get("negoziante", Boolean.class), claims.get().get("id", Integer.class));
         requestContext.setSecurityContext(new SecurityContext() {
             @Override
             public Principal getUserPrincipal() {

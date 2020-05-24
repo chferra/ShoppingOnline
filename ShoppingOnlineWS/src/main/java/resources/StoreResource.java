@@ -19,7 +19,6 @@ import java.util.Map;
 import javax.ws.rs.core.*;
 import javax.ws.rs.*;
 import utils.ExtendableBean;
-import org.json.*;
 
 /**
  * REST Web Service
@@ -38,6 +37,7 @@ public class StoreResource {
     public StoreResource() {
     }
 
+    @Authenticated
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
