@@ -6,6 +6,7 @@
 package resources;
 
 import authentication.Authenticated;
+import authentication.JwtAuthenticationService;
 import authentication.SimplePrincipal;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -18,6 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.ws.rs.core.*;
 import javax.ws.rs.*;
+import org.apache.commons.codec.digest.DigestUtils;
 import utils.ExtendableBean;
 
 /**
@@ -39,6 +41,7 @@ public class StoreResource {
 
     @Authenticated
     @POST
+    @Authenticated
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public Response registerStore(String jsonBody, @Context SecurityContext principal) {
@@ -93,5 +96,37 @@ public class StoreResource {
             throw new WebApplicationException(Response.Status.BAD_REQUEST); 
         }
 
+    }
+    
+    
+    @DELETE
+    @Produces(MediaType.APPLICATION_JSON)
+    //@Path("/delete")
+    public Response deleteStore(@QueryParam("id")String id) throws JsonProcessingException {
+        try {
+            if (id == null || id.isEmpty())
+                throw new WebApplicationException(Response.Status.BAD_REQUEST);  
+            
+            if (!DatabaseConnector.getIstance().isConnected())
+                throw new WebApplicationException("failed to connect to db", 500);
+                
+            PreparedStatement ps = DatabaseConnector.getIstance().getConnection().prepareStatement("DELETE FROM negozi WHERE ID = 22");
+            ResultSet rs = ps.executeQuery();
+            
+            int newStoreId = 0;
+            if (rs.next()) 
+                newStoreId = rs.getInt(1);
+
+            Map<String, String> response = new HashMap();
+            response.put("IdNegozio", String.valueOf(newStoreId));
+            
+            return Response
+                .status(Response.Status.OK)
+                .entity(new ObjectMapper().writeValueAsString(response))
+                .build();
+            
+       } catch (SQLException ex) {
+           throw new WebApplicationException(Response.Status.BAD_REQUEST); 
+        } 
     }
 }
