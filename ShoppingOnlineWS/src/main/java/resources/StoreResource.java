@@ -109,15 +109,18 @@ public class StoreResource {
             if (!DatabaseConnector.getIstance().isConnected())
                 throw new WebApplicationException("failed to connect to db", 500);
                 
-            PreparedStatement ps = DatabaseConnector.getIstance().getConnection().prepareStatement("DELETE FROM negozi WHERE ID = 22");
-            ResultSet rs = ps.executeQuery();
+            String sql = "DELETE FROM Negozi WHERE ID = " + id;
+            
+            PreparedStatement stmt = DatabaseConnector.getIstance().getConnection().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            stmt.execute();
+            ResultSet rs = stmt.getGeneratedKeys();
             
             int newStoreId = 0;
             if (rs.next()) 
                 newStoreId = rs.getInt(1);
 
             Map<String, String> response = new HashMap();
-            response.put("IdNegozio", String.valueOf(newStoreId));
+            response.put("IdNegozio", id);
             
             return Response
                 .status(Response.Status.OK)
