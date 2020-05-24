@@ -27,8 +27,6 @@ public class AuthenticationFilter implements ContainerRequestFilter {
     public AuthenticationFilter() {
         this.authorizationHeaderSchema = "Bearer";
         this.authenticationCookieName = "panDiStelle";
-        System.out.println("okay");
-        //throw new Exception("ok");
     }
     
     @Override
