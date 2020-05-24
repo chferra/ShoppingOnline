@@ -19,6 +19,7 @@ import java.util.Map;
 import javax.ws.rs.core.*;
 import javax.ws.rs.*;
 import utils.ExtendableBean;
+import org.json.*;
 
 /**
  * REST Web Service
@@ -37,17 +38,19 @@ public class StoreResource {
     public StoreResource() {
     }
 
-    @Authenticated
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public Response registerStore(String jsonBody, @Context SecurityContext principal) {
-        ((SimplePrincipal)principal.getUserPrincipal()).getNegoziante();
-        ((SimplePrincipal)principal.getUserPrincipal()).getId();
+        //((SimplePrincipal)principal.getUserPrincipal()).getNegoziante();
+        //((SimplePrincipal)principal.getUserPrincipal()).getId();
         
         
-        if (!DatabaseConnector.getIstance().isConnected())
+        if (!DatabaseConnector.getIstance().isConnected()) {
+            System.out.println("DB connection error !"); //NON RIMUOVERE
             throw new WebApplicationException("failed to connect to db", 500);
+        }
+            
             
         try {
 
@@ -83,8 +86,10 @@ public class StoreResource {
             
             
         } catch (SQLException ex) {
+            System.out.println("SQL error !"); //NON RIMUOVERE
             throw new WebApplicationException(Response.Status.BAD_REQUEST);  
         } catch (JsonProcessingException ex) {
+            System.out.println("JSON syntax error !"); //NON RIMUOVERE
             throw new WebApplicationException(Response.Status.BAD_REQUEST); 
         }
 
