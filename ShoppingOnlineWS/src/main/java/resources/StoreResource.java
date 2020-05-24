@@ -41,7 +41,6 @@ public class StoreResource {
 
     @Authenticated
     @POST
-    @Authenticated
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public Response registerStore(String jsonBody, @Context SecurityContext principal) {
