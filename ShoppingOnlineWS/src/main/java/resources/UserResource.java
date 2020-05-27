@@ -80,4 +80,10 @@ public class UserResource {
            throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR); 
         } 
     }
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response register(String jsonBody) {
+        
+    }
 }
