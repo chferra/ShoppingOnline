@@ -12,13 +12,17 @@ import java.sql.PreparedStatement;
 import utils.DatabaseConnector;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ws.rs.core.*;
 import javax.ws.rs.*;
 import org.apache.commons.codec.digest.DigestUtils;
+import utils.ExtendableBean;
 
 
 /**
@@ -80,4 +84,66 @@ public class UserResource {
            throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR); 
         } 
     }
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response signUp(String jsonBody) {
+        if (!DatabaseConnector.getIstance().isConnected()) 
+            throw new WebApplicationException("failed to connect to db", 500);
+        
+        try {
+
+            ExtendableBean bean = new ObjectMapper()
+                    .readerFor(ExtendableBean.class)
+                    .readValue(jsonBody);
+            
+            String nome = bean.getProperties().get("nome");
+            String cognome = bean.getProperties().get("cognome");
+            String dataNascita = bean.getProperties().get("dataNascita");
+            String email = bean.getProperties().get("email");
+            String password = bean.getProperties().get("password");
+            String idImg = bean.getProperties().containsKey("idImg") ? bean.getProperties().get("idImg") : "";
+            String mainAddress = bean.getProperties().containsKey("IdIndirizzo") ? bean.getProperties().get("IdIndirizzo") : "";
+            List<String> addressList = new ArrayList<String>();
+            
+            if (bean.getProperties().containsKey("addresses")) {
+                Map<String, String> addresses = new ObjectMapper()
+                    .readerFor(ExtendableBean.class)
+                    .readValue(bean.getProperties().get("addresses"));
+                
+                for (String s : addresses.keySet())
+                    addressList.add(addresses.get(s));               
+                    
+            }
+            
+            if (nome == null || nome.isEmpty() || cognome == null || cognome.isEmpty() || dataNascita == null || dataNascita.isEmpty() ||
+                    email == null || email.isEmpty() || password == null || password.isEmpty())
+                throw new WebApplicationException(Response.Status.BAD_REQUEST);
+
+            Statement stmt = DatabaseConnector.getIstance().getConnection().createStatement();
+            
+            String sql = "INSERT INTO utenti (nome, cognome, dataNascita, email, password) "
+                    + "VALUES ('" + nome + "', '" + idUtente + "', '" + idIndirizzo + "')";
+            
+            
+            stmt.execute();
+            ResultSet rs = stmt.getGeneratedKeys();
+            
+            int newStoreId = 0;
+            if (rs.next()) 
+                newStoreId = rs.getInt(1);
+
+            Map<String, String> response = new HashMap();
+            response.put("IdNegozio", String.valueOf(newStoreId));
+            
+            return Response
+                .status(Response.Status.OK)
+                .entity(new ObjectMapper().writeValueAsString(response))
+                .build();
+            
+            
+        } catch (SQLException | JsonProcessingException ex ) {
+            throw new WebApplicationException(Response.Status.BAD_REQUEST);  
+        } 
+    
 }

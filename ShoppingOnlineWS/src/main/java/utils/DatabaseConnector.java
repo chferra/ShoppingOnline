@@ -43,7 +43,16 @@ public class DatabaseConnector {
             istance = new DatabaseConnector();
         return istance;
     }
-    public Connection getConnection() {
+    public Connection getConnection(boolean autoCommit) {
+        try {
+            if (autoCommit)
+                conn.setAutoCommit(true);
+            else
+                conn.setAutoCommit(false);            
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(DatabaseConnector.class.getName()).log(Level.SEVERE, null, ex);
+        }
         return conn;
     }
     public boolean isConnected() {
