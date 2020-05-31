@@ -22,7 +22,8 @@ import java.util.logging.Logger;
 import javax.ws.rs.core.*;
 import javax.ws.rs.*;
 import org.apache.commons.codec.digest.DigestUtils;
-import utils.ExtendableBean;
+import org.json.*;
+import resources.entities.Address;
 
 
 /**
@@ -77,61 +78,63 @@ public class UserResource {
             throw new WebApplicationException("failed to connect to db", 500);
         
         try {
-
-            ExtendableBean bean = new ObjectMapper()
-                    .readerFor(ExtendableBean.class)
-                    .readValue(jsonBody);
             
-            String name = bean.getProperties().get("name");
-            String surname = bean.getProperties().get("surname");
-            String birthDate = bean.getProperties().get("birthDate");
-            String email = bean.getProperties().get("email");
-            String password = bean.getProperties().get("password");
-            String mainAddressJson = bean.getProperties().get("mainAddress");
+            JSONObject obj = new JSONObject(jsonBody);
             
-            ExtendableBean mainAddress = new ObjectMapper()
-                    .readerFor(ExtendableBean.class)
-                    .readValue(jsonBody);
+            String name = obj.getString("name");
+            String surname = obj.getString("surname");
+            String birthDate = obj.getString("birthDate");
+            String email = obj.getString("email");
+            String password = obj.getString("password");
+            Integer IdMainAddress = null;
             
-            //String IdProfilePic = bean.getProperties().containsKey("IdProfilePic") ? bean.getProperties().get("IdProfilePic") : "";
-            //String IdMainAddress = bean.getProperties().containsKey("IdMainAddress") ? bean.getProperties().get("IdMainAddress") : "";
-            List<String> addressList = new ArrayList<String>();
+            JSONObject mainAddressJson = obj.has("mainAddress") ? obj.getJSONObject("mainAddress") : null;
+            JSONArray secondaryAddressesJson = obj.has("secondaryAddresses") ? obj.getJSONArray("secondaryAddresses") : null;      
             
-            if (bean.getProperties().containsKey("addresses")) {
-                Map<String, String> addresses = new ObjectMapper()
-                    .readerFor(ExtendableBean.class)
-                    .readValue(bean.getProperties().get("addresses"));
-                
-                for (String s : addresses.keySet())
-                    addressList.add(addresses.get(s));               
+            Statement st = DatabaseConnector.getIstance().getConnection(false).createStatement();
+            
+            if (mainAddressJson != null || secondaryAddressesJson != null) {
+                try {
+                    st.executeQuery("INSERT INTO addresses (addressee, phone, country, province, city, street, number, zipCode) VALUES (" +                        
+                        new Address(mainAddressJson.getString("addressee"), mainAddressJson.getString("phone"), mainAddressJson.getString("country"), 
+                    mainAddressJson.getString("province"), mainAddressJson.getString("city"), mainAddressJson.getString("street"), mainAddressJson.getString("number"),
+                    mainAddressJson.getString("zipCode")).toSQL() + ")");
+                    IdMainAddress = st.getGeneratedKeys().getInt("ID");
                     
+                    for (Object o : secondaryAddressesJson) {
+                        JSONObject address = (JSONObject)o;
+                        st.executeQuery(new Address(address.getString("addressee"), address.getString("phone"), address.getString("country"), 
+                            address.getString("province"), address.getString("city"), address.getString("street"), address.getString("number"),
+                            address.getString("zipCode")).toSQL() + ")");
+                    }
+                } catch (JSONException ex) {
+                    throw new WebApplicationException(Response.Status.BAD_REQUEST); 
+                }            
             }
             
             if (name == null || name.isEmpty() || surname == null || surname.isEmpty() || birthDate == null || birthDate.isEmpty() ||
                     email == null || email.isEmpty() || password == null || password.isEmpty())
                 throw new WebApplicationException(Response.Status.BAD_REQUEST);
-
-            Statement stmt = DatabaseConnector.getIstance().getConnection(false).createStatement();
             
             String sql = "INSERT INTO users (name, surname, birthDate, email, password) "
                     + "VALUES ('" + name + "', '" + surname + "', '" + birthDate + "', '" + email + "', '" + password + "')";
             
-            stmt.executeQuery(sql);
-            ResultSet rs = stmt.getGeneratedKeys();
+            st.executeQuery(sql);
+            ResultSet rs = st.getGeneratedKeys();
             
             int userID = 0;
             if (rs.next()) 
-                userID = rs.getInt(1);
-            
+                userID = rs.getInt("ID");
+                    
             if (!IdProfilePic.equals(""))
                 stmt.executeQuery("UPDATE users SET IdProfilePic = " + IdProfilePic + " WHERE ID = " + userID);
             
-            if (!IdMainAddress.equals(""))
-                stmt.executeQuery("UPDATE users SET IdMainAddress = " + IdMainAddress + " WHERE ID = " + userID);         
+            if (IdMainAddress != null)
+                st.executeQuery("UPDATE users SET IdMainAddress = " + IdMainAddress + " WHERE ID = " + userID);         
             
             return authenticate(email, userID, false);           
             
-        } catch (SQLException | JsonProcessingException ex ) {
+        } catch (SQLException | JSONException ex) {
             throw new WebApplicationException(Response.Status.BAD_REQUEST);  
         } 
     }
