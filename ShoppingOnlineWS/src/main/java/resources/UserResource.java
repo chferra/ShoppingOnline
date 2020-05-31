@@ -48,7 +48,6 @@ public class UserResource {
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    //@Path("/login")
     public Response login(@QueryParam("email")String email, @QueryParam("password")String password) {
         try {
             if (email == null || email.isEmpty() || password == null || password.isEmpty())
@@ -57,28 +56,14 @@ public class UserResource {
             if (!DatabaseConnector.getIstance().isConnected())
                 throw new WebApplicationException("failed to connect to db", 500);
                 
-            PreparedStatement ps = DatabaseConnector.getIstance().getConnection().prepareStatement("SELECT * FROM utenti WHERE email='" + email + "' AND password='" + DigestUtils.md5Hex(password) + "'");
-            ResultSet rs = ps.executeQuery();
+            Statement st = DatabaseConnector.getIstance().getConnection(true).createStatement();
+            String sql = "SELECT * FROM users WHERE email='" + email + "' AND password='" + DigestUtils.md5Hex(password) + "'";
+            
+            ResultSet rs = st.executeQuery(sql);
             if (!rs.next()) 
                 throw new WebApplicationException(Response.Status.UNAUTHORIZED);          
             
-            return Response
-                .status(Response.Status.OK)
-                .cookie(new NewCookie(
-                        "panDiStelle",
-                        JwtAuthenticationService.getInstance().generateToken(email, rs.getInt("ID"), rs.getBoolean("negoziante"), context),
-                        null, // the URI path for which the cookie is valid
-                        null, // the host domain for which the cookie is valid. TODO: should probably set this
-                        NewCookie.DEFAULT_VERSION, // the version of the specification to which the cookie complies
-                        null, // the comment
-                        // No max-age and expiry set, cookie expires when the browser gets closed
-                        NewCookie.DEFAULT_MAX_AGE, // the maximum age of the cookie in seconds
-                        null, // the cookie expiry date
-                        false, // specifies whether the cookie will only be sent over a secure connection
-                        true // if {@code true} make the cookie HTTP only
-                
-                ))
-                .build();
+            return authenticate(email, rs.getInt("ID"), rs.getBoolean("vendor"));
             
        } catch (SQLException ex) {
            throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR); 
@@ -97,13 +82,19 @@ public class UserResource {
                     .readerFor(ExtendableBean.class)
                     .readValue(jsonBody);
             
-            String nome = bean.getProperties().get("nome");
-            String cognome = bean.getProperties().get("cognome");
-            String dataNascita = bean.getProperties().get("dataNascita");
+            String name = bean.getProperties().get("name");
+            String surname = bean.getProperties().get("surname");
+            String birthDate = bean.getProperties().get("birthDate");
             String email = bean.getProperties().get("email");
             String password = bean.getProperties().get("password");
-            String idImg = bean.getProperties().containsKey("idImg") ? bean.getProperties().get("idImg") : "";
-            String mainAddress = bean.getProperties().containsKey("IdIndirizzo") ? bean.getProperties().get("IdIndirizzo") : "";
+            String mainAddressJson = bean.getProperties().get("mainAddress");
+            
+            ExtendableBean mainAddress = new ObjectMapper()
+                    .readerFor(ExtendableBean.class)
+                    .readValue(jsonBody);
+            
+            //String IdProfilePic = bean.getProperties().containsKey("IdProfilePic") ? bean.getProperties().get("IdProfilePic") : "";
+            //String IdMainAddress = bean.getProperties().containsKey("IdMainAddress") ? bean.getProperties().get("IdMainAddress") : "";
             List<String> addressList = new ArrayList<String>();
             
             if (bean.getProperties().containsKey("addresses")) {
@@ -116,34 +107,52 @@ public class UserResource {
                     
             }
             
-            if (nome == null || nome.isEmpty() || cognome == null || cognome.isEmpty() || dataNascita == null || dataNascita.isEmpty() ||
+            if (name == null || name.isEmpty() || surname == null || surname.isEmpty() || birthDate == null || birthDate.isEmpty() ||
                     email == null || email.isEmpty() || password == null || password.isEmpty())
                 throw new WebApplicationException(Response.Status.BAD_REQUEST);
 
-            Statement stmt = DatabaseConnector.getIstance().getConnection().createStatement();
+            Statement stmt = DatabaseConnector.getIstance().getConnection(false).createStatement();
             
-            String sql = "INSERT INTO utenti (nome, cognome, dataNascita, email, password) "
-                    + "VALUES ('" + nome + "', '" + idUtente + "', '" + idIndirizzo + "')";
+            String sql = "INSERT INTO users (name, surname, birthDate, email, password) "
+                    + "VALUES ('" + name + "', '" + surname + "', '" + birthDate + "', '" + email + "', '" + password + "')";
             
-            
-            stmt.execute();
+            stmt.executeQuery(sql);
             ResultSet rs = stmt.getGeneratedKeys();
             
-            int newStoreId = 0;
+            int userID = 0;
             if (rs.next()) 
-                newStoreId = rs.getInt(1);
-
-            Map<String, String> response = new HashMap();
-            response.put("IdNegozio", String.valueOf(newStoreId));
+                userID = rs.getInt(1);
             
-            return Response
-                .status(Response.Status.OK)
-                .entity(new ObjectMapper().writeValueAsString(response))
-                .build();
+            if (!IdProfilePic.equals(""))
+                stmt.executeQuery("UPDATE users SET IdProfilePic = " + IdProfilePic + " WHERE ID = " + userID);
             
+            if (!IdMainAddress.equals(""))
+                stmt.executeQuery("UPDATE users SET IdMainAddress = " + IdMainAddress + " WHERE ID = " + userID);         
+            
+            return authenticate(email, userID, false);           
             
         } catch (SQLException | JsonProcessingException ex ) {
             throw new WebApplicationException(Response.Status.BAD_REQUEST);  
         } 
+    }
+    private Response authenticate(String email, int id, boolean vendor) {
+        return Response
+                .status(Response.Status.OK)
+                .cookie(new NewCookie(
+                        "panDiStelle",
+                        JwtAuthenticationService.getInstance().generateToken(email, id, vendor, context),
+                        null, // the URI path for which the cookie is valid
+                        null, // the host domain for which the cookie is valid. TODO: should probably set this
+                        NewCookie.DEFAULT_VERSION, // the version of the specification to which the cookie complies
+                        null, // the comment
+                        // No max-age and expiry set, cookie expires when the browser gets closed
+                        NewCookie.DEFAULT_MAX_AGE, // the maximum age of the cookie in seconds
+                        null, // the cookie expiry date
+                        false, // specifies whether the cookie will only be sent over a secure connection
+                        true // if {@code true} make the cookie HTTP only
+                
+                ))
+                .build();
+    }
     
 }

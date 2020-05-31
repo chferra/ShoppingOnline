@@ -17,10 +17,12 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.Produces;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PUT;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -70,7 +72,7 @@ public class ProductResource {
                     + "VALUES ('" + nome + "', '" + descrizione + "', '" + prezzo + "', '" + idNegozio + "')";
             
             
-            PreparedStatement stmt = DatabaseConnector.getIstance().getConnection().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement stmt = DatabaseConnector.getIstance().getConnection(true).prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             stmt.execute();
             ResultSet rs = stmt.getGeneratedKeys();
             
@@ -93,6 +95,39 @@ public class ProductResource {
             throw new WebApplicationException(Response.Status.BAD_REQUEST); 
         }
 
+    }
+    @DELETE
+    @Produces(MediaType.APPLICATION_JSON)
+    //@Path("/delete")
+    public Response deleteProdottoCarrello(@QueryParam("id")String id) throws JsonProcessingException {
+        try {
+            if (id == null || id.isEmpty())
+                throw new WebApplicationException(Response.Status.BAD_REQUEST);  
+            
+            if (!DatabaseConnector.getIstance().isConnected())
+                throw new WebApplicationException("failed to connect to db", 500);
+                
+            String sql = "DELETE FROM carts_composition WHERE ID = " + id;
+            
+            PreparedStatement stmt = DatabaseConnector.getIstance().getConnection(false).prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            stmt.execute();
+            ResultSet rs = stmt.getGeneratedKeys();
+            
+            int newStoreId = 0;
+            if (rs.next()) 
+                newStoreId = rs.getInt(1);
+
+            Map<String, String> response = new HashMap();
+            response.put("IdComprende", id);
+            
+            return Response
+                .status(Response.Status.OK)
+                .entity(new ObjectMapper().writeValueAsString(response))
+                .build();
+            
+       } catch (SQLException ex) {
+           throw new WebApplicationException(Response.Status.BAD_REQUEST); 
+        } 
     }
     
 }
