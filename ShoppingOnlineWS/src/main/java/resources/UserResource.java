@@ -6,17 +6,11 @@
 package resources;
 
 import authentication.JwtAuthenticationService;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import java.sql.PreparedStatement;
+import java.sql.Connection;
 import utils.DatabaseConnector;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ws.rs.core.*;
@@ -57,7 +51,9 @@ public class UserResource {
             if (!DatabaseConnector.getIstance().isConnected())
                 throw new WebApplicationException("failed to connect to db", 500);
                 
-            Statement st = DatabaseConnector.getIstance().getConnection(true).createStatement();
+            Connection conn = DatabaseConnector.getIstance().getConnection();
+            conn.setAutoCommit(true);
+            Statement st = conn.createStatement();
             String sql = "SELECT * FROM users WHERE email='" + email + "' AND password='" + DigestUtils.md5Hex(password) + "'";
             
             ResultSet rs = st.executeQuery(sql);
@@ -77,7 +73,13 @@ public class UserResource {
         if (!DatabaseConnector.getIstance().isConnected()) 
             throw new WebApplicationException("failed to connect to db", 500);
         
+        Connection conn = DatabaseConnector.getIstance().getConnection();    
+        
+        
+        
         try {
+            Statement st = conn.createStatement();
+            conn.setAutoCommit(false);
             
             JSONObject obj = new JSONObject(jsonBody);
             
@@ -87,11 +89,11 @@ public class UserResource {
             String email = obj.getString("email");
             String password = obj.getString("password");
             Integer IdMainAddress = null;
+            String IdProfilePic = obj.has("IdProfilePic") ? obj.getString("IdProfilePic") : "";
             
             JSONObject mainAddressJson = obj.has("mainAddress") ? obj.getJSONObject("mainAddress") : null;
-            JSONArray secondaryAddressesJson = obj.has("secondaryAddresses") ? obj.getJSONArray("secondaryAddresses") : null;      
+            JSONArray secondaryAddressesJson = obj.has("secondaryAddresses") ? obj.getJSONArray("secondaryAddresses") : null;    
             
-            Statement st = DatabaseConnector.getIstance().getConnection(false).createStatement();
             
             if (mainAddressJson != null || secondaryAddressesJson != null) {
                 try {
@@ -101,42 +103,62 @@ public class UserResource {
                     mainAddressJson.getString("zipCode")).toSQL() + ")");
                     IdMainAddress = st.getGeneratedKeys().getInt("ID");
                     
-                    for (Object o : secondaryAddressesJson) {
-                        JSONObject address = (JSONObject)o;
-                        st.executeQuery(new Address(address.getString("addressee"), address.getString("phone"), address.getString("country"), 
-                            address.getString("province"), address.getString("city"), address.getString("street"), address.getString("number"),
-                            address.getString("zipCode")).toSQL() + ")");
-                    }
+                    return Response
+                .status(Response.Status.OK)
+                .entity("got here")
+                .build();
+                
+//                    for (Object o : secondaryAddressesJson) {
+//                        JSONObject address = (JSONObject)o;
+//                        st.executeQuery(new Address(address.getString("addressee"), address.getString("phone"), address.getString("country"), 
+//                            address.getString("province"), address.getString("city"), address.getString("street"), address.getString("number"),
+//                            address.getString("zipCode")).toSQL() + ")");
+//                    }
                 } catch (JSONException ex) {
-                    throw new WebApplicationException(Response.Status.BAD_REQUEST); 
+                    throw new WebApplicationException(Response.Status.BAD_REQUEST);
                 }            
             }
-            
-            if (name == null || name.isEmpty() || surname == null || surname.isEmpty() || birthDate == null || birthDate.isEmpty() ||
-                    email == null || email.isEmpty() || password == null || password.isEmpty())
-                throw new WebApplicationException(Response.Status.BAD_REQUEST);
-            
-            String sql = "INSERT INTO users (name, surname, birthDate, email, password) "
-                    + "VALUES ('" + name + "', '" + surname + "', '" + birthDate + "', '" + email + "', '" + password + "')";
-            
-            st.executeQuery(sql);
-            ResultSet rs = st.getGeneratedKeys();
-            
-            int userID = 0;
-            if (rs.next()) 
-                userID = rs.getInt("ID");
-                    
-            if (!IdProfilePic.equals(""))
-                stmt.executeQuery("UPDATE users SET IdProfilePic = " + IdProfilePic + " WHERE ID = " + userID);
-            
-            if (IdMainAddress != null)
-                st.executeQuery("UPDATE users SET IdMainAddress = " + IdMainAddress + " WHERE ID = " + userID);         
-            
-            return authenticate(email, userID, false);           
+//            
+//            
+//            if (name == null || name.isEmpty() || surname == null || surname.isEmpty() || birthDate == null || birthDate.isEmpty() ||
+//                    email == null || email.isEmpty() || password == null || password.isEmpty())
+//                throw new WebApplicationException(Response.Status.BAD_REQUEST);
+//            
+//            String sql = "INSERT INTO users (name, surname, birthDate, email, password) "
+//                    + "VALUES ('" + name + "', '" + surname + "', '" + birthDate + "', '" + email + "', '" + password + "')";
+//            
+//            st.executeQuery(sql);
+//            ResultSet rs = st.getGeneratedKeys();
+//            
+//            int userID = 0;
+//            if (rs.next()) 
+//                userID = rs.getInt("ID");
+//                    
+//            if (!IdProfilePic.equals(""))
+//                st.executeQuery("UPDATE users SET IdProfilePic = " + IdProfilePic + " WHERE ID = " + userID);
+//            
+//            if (IdMainAddress != null)
+//                st.executeQuery("UPDATE users SET IdMainAddress = " + IdMainAddress + " WHERE ID = " + userID);         
+//            
+//            conn.commit();
+//            
+//            return authenticate(email, userID, false);           
             
         } catch (SQLException | JSONException ex) {
-            throw new WebApplicationException(Response.Status.BAD_REQUEST);  
+            return Response
+                .status(Response.Status.OK)
+                .entity(ex.toString())
+                .build();
+                     
+//            try {
+//                conn.rollback();
+//            } catch (SQLException ex1) {
+//                Logger.getLogger(UserResource.class.getName()).log(Level.SEVERE, null, ex1);
+//            }
+//            throw new WebApplicationException(Response.Status.BAD_REQUEST);  
         } 
+        return null;
+        
     }
     private Response authenticate(String email, int id, boolean vendor) {
         return Response

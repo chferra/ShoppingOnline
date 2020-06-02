@@ -18,7 +18,7 @@ import java.util.logging.Logger;
  * @author Chris
  */
 public class DatabaseConnector {
-    private static DatabaseConnector istance = null;
+    private static DatabaseConnector instance = null;
     
     private Connection conn;
     private boolean connected = false;
@@ -39,20 +39,11 @@ public class DatabaseConnector {
     }
     
     public static synchronized  DatabaseConnector getIstance() {
-        if(istance == null)
-            istance = new DatabaseConnector();
-        return istance;
+        if(instance == null)
+            instance = new DatabaseConnector();
+        return instance;
     }
-    public Connection getConnection(boolean autoCommit) {
-        try {
-            if (autoCommit)
-                conn.setAutoCommit(true);
-            else
-                conn.setAutoCommit(false);            
-            
-        } catch (SQLException ex) {
-            Logger.getLogger(DatabaseConnector.class.getName()).log(Level.SEVERE, null, ex);
-        }
+    public Connection getConnection() {
         return conn;
     }
     public boolean isConnected() {

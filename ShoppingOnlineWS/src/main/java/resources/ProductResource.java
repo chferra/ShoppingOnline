@@ -5,8 +5,6 @@
  */
 package resources;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -27,7 +25,6 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import utils.DatabaseConnector;
-import utils.ExtendableBean;
 
 /**
  * REST Web Service
@@ -50,84 +47,86 @@ public class ProductResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public Response registerProduct(String jsonBody) {
-        if (!DatabaseConnector.getIstance().isConnected())
-            throw new WebApplicationException("failed to connect to db", 500);
-            
-        try {
-
-            ExtendableBean bean = new ObjectMapper()
-                    .readerFor(ExtendableBean.class)
-                    .readValue(jsonBody);
-            
-            String nome = bean.getProperties().get("nome");
-            String descrizione = bean.getProperties().get("descrizione");
-            Float prezzo = Float.parseFloat(bean.getProperties().get("prezzo"));
-            Integer idNegozio = Integer.parseInt(bean.getProperties().get("IdNegozio"));
-            
-            if (nome == null || nome.isEmpty() || descrizione == null || descrizione.isEmpty()
-                    || prezzo == null || idNegozio == null)
-                throw new WebApplicationException(Response.Status.BAD_REQUEST);
-
-            String sql = "INSERT INTO prodotti (nome, descrizione, prezzo, IdNegozio) "
-                    + "VALUES ('" + nome + "', '" + descrizione + "', '" + prezzo + "', '" + idNegozio + "')";
-            
-            
-            PreparedStatement stmt = DatabaseConnector.getIstance().getConnection(true).prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-            stmt.execute();
-            ResultSet rs = stmt.getGeneratedKeys();
-            
-            int newProductId = 0;
-            if (rs.next()) 
-                newProductId = rs.getInt(1);
-
-            Map<String, String> response = new HashMap();
-            response.put("IdProdotto", String.valueOf(newProductId));
-            
-            return Response
-                .status(Response.Status.OK)
-                .entity(new ObjectMapper().writeValueAsString(response))
-                .build();
-            
-            
-        } catch (SQLException ex) {
-            throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR); 
-        } catch (JsonProcessingException ex) {
-            throw new WebApplicationException(Response.Status.BAD_REQUEST); 
-        }
+//        if (!DatabaseConnector.getIstance().isConnected())
+//            throw new WebApplicationException("failed to connect to db", 500);
+//            
+//        try {
+//
+//            ExtendableBean bean = new ObjectMapper()
+//                    .readerFor(ExtendableBean.class)
+//                    .readValue(jsonBody);
+//            
+//            String nome = bean.getProperties().get("nome");
+//            String descrizione = bean.getProperties().get("descrizione");
+//            Float prezzo = Float.parseFloat(bean.getProperties().get("prezzo"));
+//            Integer idNegozio = Integer.parseInt(bean.getProperties().get("IdNegozio"));
+//            
+//            if (nome == null || nome.isEmpty() || descrizione == null || descrizione.isEmpty()
+//                    || prezzo == null || idNegozio == null)
+//                throw new WebApplicationException(Response.Status.BAD_REQUEST);
+//
+//            String sql = "INSERT INTO prodotti (nome, descrizione, prezzo, IdNegozio) "
+//                    + "VALUES ('" + nome + "', '" + descrizione + "', '" + prezzo + "', '" + idNegozio + "')";
+//            
+//            
+//            PreparedStatement stmt = DatabaseConnector.getIstance().getConnection(true).prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+//            stmt.execute();
+//            ResultSet rs = stmt.getGeneratedKeys();
+//            
+//            int newProductId = 0;
+//            if (rs.next()) 
+//                newProductId = rs.getInt(1);
+//
+//            Map<String, String> response = new HashMap();
+//            response.put("IdProdotto", String.valueOf(newProductId));
+//            
+//            return Response
+//                .status(Response.Status.OK)
+//                .entity(new ObjectMapper().writeValueAsString(response))
+//                .build();
+//            
+//            
+//        } catch (SQLException ex) {
+//            throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR); 
+//        } catch (JsonProcessingException ex) {
+//            throw new WebApplicationException(Response.Status.BAD_REQUEST); 
+//        }
+        return null;
 
     }
     @DELETE
     @Produces(MediaType.APPLICATION_JSON)
     //@Path("/delete")
-    public Response deleteProdottoCarrello(@QueryParam("id")String id) throws JsonProcessingException {
-        try {
-            if (id == null || id.isEmpty())
-                throw new WebApplicationException(Response.Status.BAD_REQUEST);  
-            
-            if (!DatabaseConnector.getIstance().isConnected())
-                throw new WebApplicationException("failed to connect to db", 500);
-                
-            String sql = "DELETE FROM carts_composition WHERE ID = " + id;
-            
-            PreparedStatement stmt = DatabaseConnector.getIstance().getConnection(false).prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-            stmt.execute();
-            ResultSet rs = stmt.getGeneratedKeys();
-            
-            int newStoreId = 0;
-            if (rs.next()) 
-                newStoreId = rs.getInt(1);
-
-            Map<String, String> response = new HashMap();
-            response.put("IdComprende", id);
-            
-            return Response
-                .status(Response.Status.OK)
-                .entity(new ObjectMapper().writeValueAsString(response))
-                .build();
-            
-       } catch (SQLException ex) {
-           throw new WebApplicationException(Response.Status.BAD_REQUEST); 
-        } 
+    public Response deleteProdottoCarrello(@QueryParam("id")String id) {
+//        try {
+//            if (id == null || id.isEmpty())
+//                throw new WebApplicationException(Response.Status.BAD_REQUEST);  
+//            
+//            if (!DatabaseConnector.getIstance().isConnected())
+//                throw new WebApplicationException("failed to connect to db", 500);
+//                
+//            String sql = "DELETE FROM carts_composition WHERE ID = " + id;
+//            
+//            PreparedStatement stmt = DatabaseConnector.getIstance().getConnection(false).prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+//            stmt.execute();
+//            ResultSet rs = stmt.getGeneratedKeys();
+//            
+//            int newStoreId = 0;
+//            if (rs.next()) 
+//                newStoreId = rs.getInt(1);
+//
+//            Map<String, String> response = new HashMap();
+//            response.put("IdComprende", id);
+//            
+//            return Response
+//                .status(Response.Status.OK)
+//                .entity(new ObjectMapper().writeValueAsString(response))
+//                .build();
+//            
+//       } catch (SQLException ex) {
+//           throw new WebApplicationException(Response.Status.BAD_REQUEST); 
+//        } 
+        return null;
     }
     
 }
