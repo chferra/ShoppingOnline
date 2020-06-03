@@ -7,6 +7,7 @@ package resources;
 
 import authentication.JwtAuthenticationService;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import utils.DatabaseConnector;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -78,8 +79,8 @@ public class UserResource {
         
         
         try {
-            Statement st = conn.createStatement();
             conn.setAutoCommit(false);
+            Statement st = conn.createStatement();             
             
             JSONObject obj = new JSONObject(jsonBody);
             
@@ -97,59 +98,72 @@ public class UserResource {
             
             if (mainAddressJson != null || secondaryAddressesJson != null) {
                 try {
-                    st.executeQuery("INSERT INTO addresses (addressee, phone, country, province, city, street, number, zipCode) VALUES (" +                        
+//                    st = conn.prepareStatement("INSERT INTO addresses (addressee, phone, country, province, city, street, number, zipCode) VALUES (" +                        
+//                        new Address(mainAddressJson.getString("addressee"), mainAddressJson.getString("phone"), mainAddressJson.getString("country"), 
+//                    mainAddressJson.getString("province"), mainAddressJson.getString("city"), mainAddressJson.getString("street"), mainAddressJson.getString("number"),
+//                    mainAddressJson.getString("zipCode")).toSQL() + ")", Statement.RETURN_GENERATED_KEYS);
+                         
+                    
+                    st.execute("INSERT INTO addresses (addressee, phone, country, province, city, street, number, zipCode) VALUES (" +                        
                         new Address(mainAddressJson.getString("addressee"), mainAddressJson.getString("phone"), mainAddressJson.getString("country"), 
                     mainAddressJson.getString("province"), mainAddressJson.getString("city"), mainAddressJson.getString("street"), mainAddressJson.getString("number"),
-                    mainAddressJson.getString("zipCode")).toSQL() + ")");
-                    IdMainAddress = st.getGeneratedKeys().getInt("ID");
+                    mainAddressJson.getString("zipCode")).toSQL() + ")", Statement.RETURN_GENERATED_KEYS);
+                    ResultSet rs = st.getGeneratedKeys();
                     
-                    return Response
-                .status(Response.Status.OK)
-                .entity("got here")
-                .build();
+                    IdMainAddress = 0;
+                    if (rs.next()) 
+                        IdMainAddress = rs.getInt(1);                    
                 
-//                    for (Object o : secondaryAddressesJson) {
-//                        JSONObject address = (JSONObject)o;
-//                        st.executeQuery(new Address(address.getString("addressee"), address.getString("phone"), address.getString("country"), 
-//                            address.getString("province"), address.getString("city"), address.getString("street"), address.getString("number"),
-//                            address.getString("zipCode")).toSQL() + ")");
-//                    }
+                    if (secondaryAddressesJson != null) {
+                        for (Object o : secondaryAddressesJson) {
+                            JSONObject address = (JSONObject)o;
+                            st.executeQuery(new Address(address.getString("addressee"), address.getString("phone"), address.getString("country"), 
+                                address.getString("province"), address.getString("city"), address.getString("street"), address.getString("number"),
+                                address.getString("zipCode")).toSQL() + ")");
+                        }
+                    }
                 } catch (JSONException ex) {
+//                    return Response
+//                        .status(Response.Status.OK)
+//                        .entity(ex.toString())
+//                        .build();
+                    conn.rollback();
                     throw new WebApplicationException(Response.Status.BAD_REQUEST);
                 }            
             }
-//            
-//            
-//            if (name == null || name.isEmpty() || surname == null || surname.isEmpty() || birthDate == null || birthDate.isEmpty() ||
-//                    email == null || email.isEmpty() || password == null || password.isEmpty())
-//                throw new WebApplicationException(Response.Status.BAD_REQUEST);
-//            
-//            String sql = "INSERT INTO users (name, surname, birthDate, email, password) "
-//                    + "VALUES ('" + name + "', '" + surname + "', '" + birthDate + "', '" + email + "', '" + password + "')";
-//            
-//            st.executeQuery(sql);
-//            ResultSet rs = st.getGeneratedKeys();
-//            
-//            int userID = 0;
-//            if (rs.next()) 
-//                userID = rs.getInt("ID");
-//                    
-//            if (!IdProfilePic.equals(""))
-//                st.executeQuery("UPDATE users SET IdProfilePic = " + IdProfilePic + " WHERE ID = " + userID);
-//            
-//            if (IdMainAddress != null)
-//                st.executeQuery("UPDATE users SET IdMainAddress = " + IdMainAddress + " WHERE ID = " + userID);         
-//            
-//            conn.commit();
-//            
-//            return authenticate(email, userID, false);           
+            
+            
+            if (name == null || name.isEmpty() || surname == null || surname.isEmpty() || birthDate == null || birthDate.isEmpty() ||
+                    email == null || email.isEmpty() || password == null || password.isEmpty())
+                throw new WebApplicationException(Response.Status.BAD_REQUEST);
+            
+            String sql = "INSERT INTO users (name, surname, birthDate, email, password) "
+                    + "VALUES ('" + name + "', '" + surname + "', '" + birthDate + "', '" + email + "', '" + password + "')";
+            
+            //st = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            
+            st.execute(sql, Statement.RETURN_GENERATED_KEYS);
+            ResultSet rs = st.getGeneratedKeys();
+            
+            int userID = 0;
+            if (rs.next()) 
+                userID = rs.getInt(1);
+                    
+            if (!IdProfilePic.equals(""))
+                st.execute("UPDATE users SET IdProfilePic = " + IdProfilePic + " WHERE ID = " + userID, Statement.RETURN_GENERATED_KEYS);
+            
+            if (IdMainAddress != null)
+                st.execute("UPDATE users SET IdMainAddress = " + IdMainAddress + " WHERE ID = " + userID, Statement.RETURN_GENERATED_KEYS);         
+            
+            conn.commit();
+            
+            return authenticate(email, userID, false);           
             
         } catch (SQLException | JSONException ex) {
             return Response
-                .status(Response.Status.OK)
-                .entity(ex.toString())
-                .build();
-                     
+                        .status(Response.Status.OK)
+                        .entity(ex.toString())
+                        .build();
 //            try {
 //                conn.rollback();
 //            } catch (SQLException ex1) {
@@ -157,7 +171,6 @@ public class UserResource {
 //            }
 //            throw new WebApplicationException(Response.Status.BAD_REQUEST);  
         } 
-        return null;
         
     }
     private Response authenticate(String email, int id, boolean vendor) {
