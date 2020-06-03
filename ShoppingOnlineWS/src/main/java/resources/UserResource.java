@@ -77,7 +77,6 @@ public class UserResource {
         Connection conn = DatabaseConnector.getIstance().getConnection();    
         
         
-        
         try {
             conn.setAutoCommit(false);
             Statement st = conn.createStatement();             
@@ -97,12 +96,6 @@ public class UserResource {
             
             
             if (mainAddressJson != null || secondaryAddressesJson != null) {
-                try {
-//                    st = conn.prepareStatement("INSERT INTO addresses (addressee, phone, country, province, city, street, number, zipCode) VALUES (" +                        
-//                        new Address(mainAddressJson.getString("addressee"), mainAddressJson.getString("phone"), mainAddressJson.getString("country"), 
-//                    mainAddressJson.getString("province"), mainAddressJson.getString("city"), mainAddressJson.getString("street"), mainAddressJson.getString("number"),
-//                    mainAddressJson.getString("zipCode")).toSQL() + ")", Statement.RETURN_GENERATED_KEYS);
-                         
                     
                     st.execute("INSERT INTO addresses (addressee, phone, country, province, city, street, number, zipCode) VALUES (" +                        
                         new Address(mainAddressJson.getString("addressee"), mainAddressJson.getString("phone"), mainAddressJson.getString("country"), 
@@ -112,7 +105,7 @@ public class UserResource {
                     
                     IdMainAddress = 0;
                     if (rs.next()) 
-                        IdMainAddress = rs.getInt(1);                    
+                        IdMainAddress = rs.getInt(1);                     
                 
                     if (secondaryAddressesJson != null) {
                         for (Object o : secondaryAddressesJson) {
@@ -121,15 +114,7 @@ public class UserResource {
                                 address.getString("province"), address.getString("city"), address.getString("street"), address.getString("number"),
                                 address.getString("zipCode")).toSQL() + ")");
                         }
-                    }
-                } catch (JSONException ex) {
-//                    return Response
-//                        .status(Response.Status.OK)
-//                        .entity(ex.toString())
-//                        .build();
-                    conn.rollback();
-                    throw new WebApplicationException(Response.Status.BAD_REQUEST);
-                }            
+                    }          
             }
             
             
@@ -140,7 +125,6 @@ public class UserResource {
             String sql = "INSERT INTO users (name, surname, birthDate, email, password) "
                     + "VALUES ('" + name + "', '" + surname + "', '" + birthDate + "', '" + email + "', '" + password + "')";
             
-            //st = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             
             st.execute(sql, Statement.RETURN_GENERATED_KEYS);
             ResultSet rs = st.getGeneratedKeys();
@@ -160,16 +144,12 @@ public class UserResource {
             return authenticate(email, userID, false);           
             
         } catch (SQLException | JSONException ex) {
-            return Response
-                        .status(Response.Status.OK)
-                        .entity(ex.toString())
-                        .build();
-//            try {
-//                conn.rollback();
-//            } catch (SQLException ex1) {
-//                Logger.getLogger(UserResource.class.getName()).log(Level.SEVERE, null, ex1);
-//            }
-//            throw new WebApplicationException(Response.Status.BAD_REQUEST);  
+            try {
+                conn.rollback();
+            } catch (SQLException ex1) {
+                Logger.getLogger(UserResource.class.getName()).log(Level.SEVERE, null, ex1);
+            }
+            throw new WebApplicationException(Response.Status.BAD_REQUEST);  
         } 
         
     }
