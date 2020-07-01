@@ -5,12 +5,10 @@
  */
 package resources;
 
-import java.sql.PreparedStatement;
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.HashMap;
-import java.util.Map;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.Produces;
@@ -24,6 +22,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import org.apache.commons.codec.digest.DigestUtils;
 import utils.DatabaseConnector;
 
 /**
@@ -41,6 +40,34 @@ public class ProductResource {
      * Creates a new instance of ProductResource
      */
     public ProductResource() {
+    }
+    
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getProducts(@QueryParam("keyword")String keyword) {
+        try {
+            Connection conn = DatabaseConnector.getIstance().getConnection();
+            conn.setAutoCommit(true);
+            Statement st = conn.createStatement();
+            String sql = "SELECT * FROM users WHERE name LIKE '%" + keyword + "%' AND password='";
+            
+            ResultSet rs = st.executeQuery(sql);
+
+            if (!rs.next()) 
+                throw new WebApplicationException(Response.Status.NOT_FOUND);      
+            else {
+                do {
+                    int id = rs.getInt("ID");
+                    String name = rs.getString("name");
+                    int price = rs.getInt("price");
+                    int idShop = rs.getInt("IdShop");
+                } while (rs.next());
+            }
+            
+        } catch (SQLException ex) {
+            throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR); 
+        }
+        return null;
     }
 
     @POST

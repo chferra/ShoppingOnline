@@ -31,7 +31,7 @@ export default class LoginScreen extends Component {
         
         //this.setState({isLoggingIn: true});
         
-        fetch('http://192.168.1.10:8080/ShoppingOnlineWS/resources/user?email=' + this.state.email + '&password=' + this.state.password, {
+        fetch('http://192.168.1.19:8080/ShoppingOnlineWS/resources/user?email=' + this.state.email + '&password=' + this.state.password, {
               method: 'get',
               headers: {
                 'Accept': 'application/json'
@@ -42,6 +42,8 @@ export default class LoginScreen extends Component {
                 //const navigation = useNavigation();
                 if (response.status === 200) 
                     navigate('Home');
+                else
+                    Alert.alert("Error", "Invalid credentials");
 
                 //Alert.alert("ok"); //response.headers);
 
@@ -79,10 +81,10 @@ export default class LoginScreen extends Component {
                     />
 
                     <View style={{marginTop:'5%'}} />
-                    <Text style={{color: 'white', textAlign: 'right'}} onPress={() => navigate('ResetPassword') }  >
+                    <Text style={{color: 'white', marginLeft: '50%'}} onPress={() => navigate('ResetPassword') }  >
                         Forgot your password?
                     </Text>    
-                    <View style={{marginTop:'10%'}} />
+                    <View style={{marginTop:'10%'}} />                    
                             
                     <TouchableHighlight 
                         style={styles.button} 

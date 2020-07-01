@@ -74,8 +74,7 @@ public class UserResource {
         if (!DatabaseConnector.getIstance().isConnected()) 
             throw new WebApplicationException("failed to connect to db", 500);
         
-        Connection conn = DatabaseConnector.getIstance().getConnection();    
-        
+        Connection conn = DatabaseConnector.getIstance().getConnection();          
         
         try {
             conn.setAutoCommit(false);
@@ -89,11 +88,10 @@ public class UserResource {
             String email = obj.getString("email");
             String password = obj.getString("password");
             Integer IdMainAddress = null;
-            String IdProfilePic = obj.has("IdProfilePic") ? obj.getString("IdProfilePic") : "";
+            Integer IdProfilePic = obj.has("IdProfilePic") ? obj.getInt("IdProfilePic") : null;
             
             JSONObject mainAddressJson = obj.has("mainAddress") ? obj.getJSONObject("mainAddress") : null;
             JSONArray secondaryAddressesJson = obj.has("secondaryAddresses") ? obj.getJSONArray("secondaryAddresses") : null;    
-            
             
             if (mainAddressJson != null || secondaryAddressesJson != null) {
                     
@@ -107,16 +105,17 @@ public class UserResource {
                     if (rs.next()) 
                         IdMainAddress = rs.getInt(1);                     
                 
-                    if (secondaryAddressesJson != null) {
-                        for (Object o : secondaryAddressesJson) {
-                            JSONObject address = (JSONObject)o;
-                            st.executeQuery(new Address(address.getString("addressee"), address.getString("phone"), address.getString("country"), 
-                                address.getString("province"), address.getString("city"), address.getString("street"), address.getString("number"),
-                                address.getString("zipCode")).toSQL() + ")");
+                        if (secondaryAddressesJson != null) {
+                            for (int i = 0; i < secondaryAddressesJson.length(); i++) {
+                                JSONObject address = secondaryAddressesJson.getJSONObject(i);
+                                st.execute("INSERT INTO addresses (addressee, phone, country, province, city, street, number, zipCode) VALUES (" +
+                                        new Address(address.getString("addressee"), address.getString("phone"), address.getString("country"), 
+                                        address.getString("province"), address.getString("city"), address.getString("street"), address.getString("number"),
+                                        address.getString("zipCode")).toSQL() + ")");
+                            }
                         }
-                    }          
-            }
-            
+                              
+            }            
             
             if (name == null || name.isEmpty() || surname == null || surname.isEmpty() || birthDate == null || birthDate.isEmpty() ||
                     email == null || email.isEmpty() || password == null || password.isEmpty())
@@ -124,7 +123,6 @@ public class UserResource {
             
             String sql = "INSERT INTO users (name, surname, birthDate, email, password) "
                     + "VALUES ('" + name + "', '" + surname + "', '" + birthDate + "', '" + email + "', '" + password + "')";
-            
             
             st.execute(sql, Statement.RETURN_GENERATED_KEYS);
             ResultSet rs = st.getGeneratedKeys();
