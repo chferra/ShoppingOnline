@@ -45,15 +45,20 @@ public class UserResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response login(@QueryParam("email")String email, @QueryParam("password")String password) {
+        if (!DatabaseConnector.getIstance().isConnected()) 
+            throw new WebApplicationException("failed to connect to db", 500);
+        
+        Connection conn = DatabaseConnector.getIstance().getConnection();            
+        
         try {
+            conn.setAutoCommit(true);
+            
             if (email == null || email.isEmpty() || password == null || password.isEmpty())
                 throw new WebApplicationException(Response.Status.BAD_REQUEST);  
             
             if (!DatabaseConnector.getIstance().isConnected())
                 throw new WebApplicationException("failed to connect to db", 500);
                 
-            Connection conn = DatabaseConnector.getIstance().getConnection();
-            conn.setAutoCommit(true);
             Statement st = conn.createStatement();
             String sql = "SELECT * FROM users WHERE email='" + email + "' AND password='" + DigestUtils.md5Hex(password) + "'";
             
