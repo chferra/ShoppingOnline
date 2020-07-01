@@ -40,6 +40,10 @@ public class UtilBase64Image {
   }
   
   public static void decoder(String base64Image, String pathFile) {
+      File directory = new File("ShoppingOnlineStoredImages");
+      if (!directory.exists()){
+           directory.mkdir();
+      
       try {                  
           FileOutputStream imageOutFile = new FileOutputStream(pathFile, false);
           // Converting a Base64 String into Image byte array          
