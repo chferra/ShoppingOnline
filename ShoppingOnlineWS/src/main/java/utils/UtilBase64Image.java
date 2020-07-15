@@ -14,12 +14,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Base64;
-import java.util.logging.Level;
-import java.util.logging.Logger;
  
 public class UtilBase64Image {
   public static String encoder(String imagePath) {
@@ -55,4 +50,5 @@ public class UtilBase64Image {
           System.out.println("Exception while reading the Image " + ioe);
       }
   }
+  }   
 }

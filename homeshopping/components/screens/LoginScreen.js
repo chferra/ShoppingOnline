@@ -31,7 +31,7 @@ export default class LoginScreen extends Component {
         
         //this.setState({isLoggingIn: true});
         
-        fetch('http://192.168.1.19:8080/ShoppingOnlineWS/resources/user?email=' + this.state.email + '&password=' + this.state.password, {
+        fetch('http://192.168.1.18:8080/ShoppingOnlineWS/resources/user?email=' + this.state.email + '&password=' + this.state.password, {
               method: 'get',
               headers: {
                 'Accept': 'application/json'
@@ -59,8 +59,8 @@ export default class LoginScreen extends Component {
     render() {
         const { navigate } = this.props.navigation;
         return (
-            <View style={styles.main}>
-                <ImageBackground source={loginBg} style={styles.image} />
+            <View>
+                <ImageBackground source={faidingBg} style={styles.image} />
 
                 <View style={styles.container}>
                 
@@ -69,7 +69,7 @@ export default class LoginScreen extends Component {
                         Login
                     </Text>
                     <View style={{marginTop:'25%'}} />
-                    <TextInput placeholder='Email' style={styles.inputField} placeholderTextColor='white' 
+                    <TextInput placeholder='Email' style={styles.inputField} placeholderTextColor='white'
                         onChangeText={(value) => this.setState({email: value})}
                         value={this.state.email}
                     />
@@ -96,7 +96,7 @@ export default class LoginScreen extends Component {
 
                 </View>
 
-                    <View style={{marginTop:'30%'}} />
+                    <View style={{marginTop:'28%'}} />
 
                     <Text style={{textAlign: 'center', color:'white'}}>Don't have an account? 
                         <Text> </Text>
@@ -113,7 +113,7 @@ export default class LoginScreen extends Component {
     
 }
 
-const loginBg = require("./images/loginBg.jpg");
+const faidingBg = require("./images/fadingBg.jpg");
 
 const styles = StyleSheet.create({
     container: {
@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
         borderWidth: 0.5,
         borderRadius: 30,
         width: '100%',
-        height: '17.5%',
+        height: '13%',
         paddingLeft: 20,   
         color:'white',
 
@@ -150,7 +150,7 @@ const styles = StyleSheet.create({
         borderRadius: 30,
         backgroundColor: 'white',
         width: '100%',
-        height: '17.5%',
+        height: '13%',
     },
     buttonText: {
         textAlign:'center',

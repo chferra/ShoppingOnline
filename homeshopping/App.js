@@ -27,7 +27,16 @@ const AppNavigator = createStackNavigator({
     screen: HomeScreen
   },
   Signup: {
-    screen: SignupScreen
+    screen: SignupScreen,
+    navigationOptions: {
+      title: '',
+      headerTransparent: true, 
+      headerTitleStyle: {
+        color: 'white'
+      },
+      headerTintColor: 'white',      
+    }
+    
   },
   ResetPassword: {
     screen: ResetPasswordScreen
