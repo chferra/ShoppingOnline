@@ -8,8 +8,10 @@ import {
     ImageBackground,
     Dimensions,
     TouchableHighlight,
-    Alert
+    Alert,
+    Platform
 } from 'react-native';
+import DialogInput from 'react-native-dialog-input-custom';
 
 //import { withNavigation } from 'react-navigation';
 
@@ -24,7 +26,8 @@ export default class LoginScreen extends Component {
         isLoggingIn: false,
         email: '',
         password: '',
-        nav: this.props.navigator
+        nav: this.props.navigator,
+        dialogIsVisible: true
     }
 
     Login = async (navigate) => {
@@ -60,6 +63,12 @@ export default class LoginScreen extends Component {
         const { navigate } = this.props.navigation;
         return (
             <View>
+                <DialogInput 
+        dialogIsVisible={this.state.dialogIsVisible}
+        closeDialogInput={() => this.setState({dialogIsVisible: false})}
+        submitInput={(textValue) => console.warn(textValue)}
+        />
+
                 <ImageBackground source={faidingBg} style={styles.image} />
 
                 <View style={styles.container}>
