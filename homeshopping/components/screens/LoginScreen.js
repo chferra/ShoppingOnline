@@ -8,7 +8,8 @@ import {
     ImageBackground,
     Dimensions,
     TouchableHighlight,
-    Alert
+    Alert,
+    Platform
 } from 'react-native';
 import Dialog from "react-native-dialog";
 import { ScrollView } from 'react-native-gesture-handler';
@@ -115,7 +116,7 @@ export default class LoginScreen extends Component {
 
                     <TouchableHighlight
                         style={styles.button}
-                        //onPress={this.Login.bind(this)} 
+                        //onPress={this.Login.bind(this)}
                         onPress={() => this.Login(navigate)}
                         disabled={this.state.isLoggingIn || !this.state.email || !this.state.password} >
                         <Text style={styles.buttonText}>Log in</Text>
@@ -198,4 +199,3 @@ const styles = StyleSheet.create({
         width: "15%"
     }
 });
-
