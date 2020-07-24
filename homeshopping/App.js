@@ -6,6 +6,7 @@ import { createStackNavigator } from 'react-navigation-stack';
 import LoginScreen from './components/screens/LoginScreen';
 import HomeScreen from './components/screens/HomeScreen';
 import SignupScreen from './components/screens/SignupScreen';
+import SignupProfilePicScreen from './components/screens/SignupProfilePicScreen';
 import ResetPasswordScreen from './components/screens/ResetPasswordScreen';
 
 export default class App extends Component {
@@ -37,6 +38,17 @@ const AppNavigator = createStackNavigator({
       headerTintColor: 'white',      
     }
     
+  },
+  SignupProfilePic: {
+    screen: SignupProfilePicScreen,
+    navigationOptions: {
+      title: '',
+      headerTransparent: true, 
+      headerTitleStyle: {
+        color: 'white'
+      },
+      headerTintColor: 'white',      
+    }
   },
   ResetPassword: {
     screen: ResetPasswordScreen
