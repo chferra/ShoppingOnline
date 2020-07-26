@@ -15,6 +15,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Base64;
+import org.apache.commons.io.FileUtils;
  
 public class UtilBase64Image {
   public static String encoder(String imagePath) {
@@ -36,19 +37,20 @@ public class UtilBase64Image {
   
   public static void decoder(String base64Image, String pathFile) {
       File directory = new File("ShoppingOnlineStoredImages");
-      if (!directory.exists()){
+      if (!directory.exists())
            directory.mkdir();
       
       try {                  
           FileOutputStream imageOutFile = new FileOutputStream(pathFile, false);
           // Converting a Base64 String into Image byte array          
           byte[] imageByteArray = Base64.getDecoder().decode(base64Image);
-          imageOutFile.write(imageByteArray);
+          FileUtils.writeByteArrayToFile(new File(pathFile), imageByteArray);         
+          
       } catch (FileNotFoundException e) {
           System.out.println("Image not found" + e);
       } catch (IOException ioe) {
           System.out.println("Exception while reading the Image " + ioe);
       }
-  }
+  
   }   
 }

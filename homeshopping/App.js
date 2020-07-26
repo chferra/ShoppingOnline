@@ -8,6 +8,7 @@ import HomeScreen from './components/screens/HomeScreen';
 import SignupScreen from './components/screens/SignupScreen';
 import SignupProfilePicScreen from './components/screens/SignupProfilePicScreen';
 import ResetPasswordScreen from './components/screens/ResetPasswordScreen';
+import SignupAddressesScreen from './components/screens/SignupAddressesScreen';
 
 export default class App extends Component {
 
@@ -41,6 +42,17 @@ const AppNavigator = createStackNavigator({
   },
   SignupProfilePic: {
     screen: SignupProfilePicScreen,
+    navigationOptions: {
+      title: '',
+      headerTransparent: true, 
+      headerTitleStyle: {
+        color: 'white'
+      },
+      headerTintColor: 'white',      
+    }
+  },
+  SignupAddresses: {
+    screen: SignupAddressesScreen,
     navigationOptions: {
       title: '',
       headerTransparent: true, 

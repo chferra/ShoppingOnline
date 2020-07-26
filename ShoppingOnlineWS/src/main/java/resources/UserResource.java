@@ -124,6 +124,7 @@ public class UserResource {
 
     }
 
+    @Authenticated
     @PUT
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)

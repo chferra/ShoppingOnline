@@ -5,6 +5,7 @@
  */
 package resources;
 
+import authentication.Authenticated;
 import authentication.JwtAuthenticationService;
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -25,6 +26,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.SecurityContext;
 import org.apache.commons.io.FilenameUtils;
 import org.json.JSONObject;
 import utils.DatabaseConnector;
@@ -46,10 +48,11 @@ public class PictureResource {
     public PictureResource() {
     }
     
+    @Authenticated
     @POST
     @Produces(MediaType.TEXT_PLAIN)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response uploadPicture(String jsonBody) {
+    public Response uploadPicture(String jsonBody, @Context SecurityContext principal) {
         if (!DatabaseConnector.getIstance().isConnected()) 
             throw new WebApplicationException("failed to connect to db", 500);
         
@@ -60,7 +63,7 @@ public class PictureResource {
             
             JSONObject obj = new JSONObject(jsonBody);
             
-            String imageName = obj.getString("imageName");
+            String imageName = obj.getString("imagePath");
             String base64ImageData = obj.getString("imageData");
             
             String imageExtension = FilenameUtils.getExtension(imageName);
