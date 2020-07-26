@@ -49,7 +49,7 @@ export default class SignupScreen extends Component {
                 //this.setState({isSigningUp: false});
 
                 if (response.status === 200) 
-                    navigate('Home');
+                    navigate('SignupProfilePic');
                 else
                     Alert.alert("Error", "The information you entered is invalid: " + response.status);
                 

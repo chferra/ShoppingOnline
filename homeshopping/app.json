@@ -10,7 +10,7 @@
     ],
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./logo.png",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
@@ -22,8 +22,14 @@
     "assetBundlePatterns": [
       "**/*"
     ],
-    "ios": {
-      "supportsTablet": true
+	"ios": {
+      "bundleIdentifier": "com.me.homeshopping",
+      "buildNumber": "1.0.0",
+	  "supportsTablet": true
+    },
+    "android": {
+      "package": "com.me.homeshopping",
+      "versionCode": 1
     }
   },
   "name": "homeshopping"
