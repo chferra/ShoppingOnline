@@ -6,4 +6,7 @@
 6) Provare ad effettuare una registrazione al sistema, eventualmente aggiungendo una foto profilo
 7) Chiudere l'applicazione smartphone e provare ad autenticarsi al sistema con l'account appena creato
 
-N.B. La registrazione include automaticamente l'autenticazione al sistema, perciò in seguito alla stessa l'utente verrà reindirizzato direttamente alla homepage (non ancora implementata).
+N.B. 
+L'inserimento degli indirizzi di spedizione al momento non è stato ancora implementato sul client, perciò premere "Skip" per saltare questa fase (il pulsante per aggiungere indirizzi non è abilitato).
+
+La registrazione include automaticamente l'autenticazione al sistema, perciò in seguito alla stessa l'utente verrà reindirizzato direttamente alla homepage (non ancora implementata).
