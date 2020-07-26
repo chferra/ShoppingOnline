@@ -19,12 +19,6 @@ export default class SignupScreen extends Component {
 
     state = {
         isSigningUp: false,
-        name: '',
-        surname: '',
-        date: false,
-        email: '',
-        password: '',
-        confirmPassword: '',
         nav: this.props.navigator
     }
 
@@ -67,7 +61,7 @@ export default class SignupScreen extends Component {
 
                 <ImageBackground source={faidingBg} style={styles.image} />
 
-                <View style={styles.container}>
+                <View style={styles.upperContainer}>
                     <Text style={{ fontSize: 27, fontWeight: "bold", color: 'white', textAlign: 'center' }}>Create your account</Text>
                     <Text style={{ fontSize: 18, color: '#ffb829', textAlign: 'center' }}>Shipping address</Text>
                     <View style={{ marginTop: '10%' }} />
@@ -75,27 +69,35 @@ export default class SignupScreen extends Component {
                     <TouchableHighlight
                         style={styles.button}
                         onPress={() => /*this.Signup(navigate) */ navigate('SignupProfilePic')}
-                    //disabled={this.state.isSigningUp || !this.state.name || !this.state.surname || !this.state.date || !this.state.email ||
-                    //    !this.state.password || !this.state.confirmPassword} 
+                        disabled={true}
                     >
                         
                         <Text style={styles.buttonText}>Add a new address</Text>
                     </TouchableHighlight>
-                </View>
 
-                <View style={{ marginTop: '5%' }} />
-                <Text>Your addresses:</Text>
+                    <View style={{ marginTop: '6%' }} />
+
+                    <Text
+                        style={{ fontWeight: "bold", color: "white", textAlign: 'center' }}
+                        onPress={() => navigate('Home')} >
+                        {this.state.pictureChosen ? '' : 'Skip'}
+                    </Text>
+                </View>          
+
+                <Text style={{ fontSize: 18, color: 'white', textAlign: 'center' }}>
+                    Your addresses:
+                </Text>      
+
+                <View style={styles.bottomContainer}>              
+                
+
+                <ScrollView>
 
 
-
-                <ScrollView style={styles.container} >
-
-
-                    <View style={{ marginTop: '5%' }} />
-
-
-                    <View style={{ marginTop: '10%' }} />
                 </ScrollView>
+
+                
+                </View>
             </View>
         )
     }
@@ -105,11 +107,21 @@ export default class SignupScreen extends Component {
 const faidingBg = require("./images/fadingBg.jpg");
 
 const styles = StyleSheet.create({
-    container: {
-        marginTop: '27%',
+    upperContainer: {
+        marginTop: "20%",
         marginLeft: '10%',
         marginRight: '10%',
+        height: "28%"
         //marginTop: 100,
+    },
+    bottomContainer: {
+        marginLeft: '10%',
+        marginRight: '10%',
+        height: "54%",
+        borderWidth: 1,
+        borderColor: "white",
+        borderRadius: 30
+
     },
     image: {
         flex: 1,
@@ -133,7 +145,7 @@ const styles = StyleSheet.create({
         borderRadius: 30,
         backgroundColor: 'white',
         width: '100%',
-        height: '9%',
+        height: '25%',
     },
     buttonText: {
         textAlign: 'center',

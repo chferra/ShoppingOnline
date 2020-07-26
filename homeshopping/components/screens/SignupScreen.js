@@ -171,9 +171,9 @@ export default class SignupScreen extends Component {
                     <TouchableHighlight
                         style={styles.button}
                         //onPress={this.Login.bind(this)} 
-                        onPress={() => /*this.Signup(navigate) */ navigate('SignupProfilePic') }
-                        //disabled={this.state.isSigningUp || !this.state.name || !this.state.surname || !this.state.date || !this.state.email ||
-                        //    !this.state.password || !this.state.confirmPassword} 
+                        onPress={() => this.Signup(navigate) }
+                        disabled={this.state.isSigningUp || !this.state.name || !this.state.surname || !this.state.date || !this.state.email ||
+                            !this.state.password || !this.state.confirmPassword} 
                         >
                         <Text style={styles.buttonText}>Sign up</Text>
                     </TouchableHighlight>

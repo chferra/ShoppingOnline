@@ -116,7 +116,6 @@ export default class LoginScreen extends Component {
 
                     <TouchableHighlight
                         style={styles.button}
-                        //onPress={this.Login.bind(this)}
                         onPress={() => this.Login(navigate)}
                         disabled={this.state.isLoggingIn || !this.state.email || !this.state.password} >
                         <Text style={styles.buttonText}>Log in</Text>
