@@ -1,0 +1,9 @@
+1) Installare su un dispositivo mobile l'apk
+2) Disabilitare tutti i firewall per la rete privata
+3) Connettere la macchina che hosta il server e dispositivo mobile ALLA STESSA RETE
+4) Avviare la web application tramite l'utilizzo di apache/tomcat
+5) Avviare l'applicazione smartphone, specificando l'indirizzo IP del server
+6) Provare ad effettuare una registrazione al sistema, eventualmente aggiungendo una foto profilo
+7) Chiudere l'applicazione smartphone e provare ad autenticarsi al sistema con l'account appena creato
+
+N.B. La registrazione include automaticamente l'autenticazione al sistema, perciò in seguito alla stessa l'utente verrà reindirizzato direttamente alla homepage (non ancora implementata).
