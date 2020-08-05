@@ -68,9 +68,8 @@ public class UserResource {
             String sql = "SELECT * FROM users WHERE email='" + email + "' AND password='" + DigestUtils.md5Hex(password) + "'";
 
             ResultSet rs = st.executeQuery(sql);
-            if (!rs.next()) {
+            if (!rs.next())
                 throw new WebApplicationException(Response.Status.UNAUTHORIZED);
-            }
 
             return authenticate(email, rs.getInt("ID"), rs.getBoolean("vendor"));
 
@@ -126,27 +125,18 @@ public class UserResource {
 
     @Authenticated
     @PUT
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.TEXT_PLAIN)
     @Path("/profilePicture")
-    public Response signUpPicture(String jsonBody, @Context SecurityContext principal) {
-        if (!DatabaseConnector.getIstance().isConnected()) {
+    public Response signUpPicture(String body, @Context SecurityContext principal) {
+        if (!DatabaseConnector.getIstance().isConnected())
             throw new WebApplicationException("failed to connect to db", 500);
-        }
 
         Connection conn = DatabaseConnector.getIstance().getConnection();
         try {
             conn.setAutoCommit(true);
             Statement st = conn.createStatement();
 
-            JSONObject obj = new JSONObject(jsonBody);
-
-            Integer IdProfilePic = obj.getInt("IdProfilePic");
-
-            if (IdProfilePic == null) {
-                throw new WebApplicationException(Response.Status.BAD_REQUEST);
-            }
-
+            Integer IdProfilePic = Integer.parseInt(body);
             Integer userID = ((SimplePrincipal) principal.getUserPrincipal()).getId();
 
             st.execute("UPDATE users SET IdProfilePic = " + IdProfilePic + " WHERE ID = " + userID, Statement.RETURN_GENERATED_KEYS);
@@ -176,14 +166,16 @@ public class UserResource {
 
             JSONObject mainAddressJson = obj.getJSONObject("mainAddress");
             JSONArray secondaryAddressesJson = obj.has("secondaryAddresses") ? obj.getJSONArray("secondaryAddresses") : null;
-
+            
+            Integer userID = ((SimplePrincipal) principal.getUserPrincipal()).getId();
+            
             if (mainAddressJson != null)
                 throw new WebApplicationException(Response.Status.BAD_REQUEST);            
 
             st.execute("INSERT INTO addresses (addressee, phone, country, province, city, street, number, zipCode) VALUES ("
                     + new Address(mainAddressJson.getString("addressee"), mainAddressJson.getString("phone"), mainAddressJson.getString("country"),
                             mainAddressJson.getString("province"), mainAddressJson.getString("city"), mainAddressJson.getString("street"), mainAddressJson.getString("number"),
-                            mainAddressJson.getString("zipCode")).toSQL() + ")", Statement.RETURN_GENERATED_KEYS);
+                            mainAddressJson.getString("zipCode"), mainAddressJson.getBoolean("primaryAddress"), userID).toShortSQL() + ")", Statement.RETURN_GENERATED_KEYS);
             ResultSet rs = st.getGeneratedKeys();
 
             Integer IdMainAddress = 0;
@@ -196,7 +188,7 @@ public class UserResource {
                     st.execute("INSERT INTO addresses (addressee, phone, country, province, city, street, number, zipCode) VALUES ("
                             + new Address(address.getString("addressee"), address.getString("phone"), address.getString("country"),
                                     address.getString("province"), address.getString("city"), address.getString("street"), address.getString("number"),
-                                    address.getString("zipCode")).toSQL() + ")");
+                                    address.getString("zipCode"), address.getBoolean("primaryAddress"), userID).toShortSQL() + ")");
                 }
             }
             return Response.status(Response.Status.NO_CONTENT).build();            

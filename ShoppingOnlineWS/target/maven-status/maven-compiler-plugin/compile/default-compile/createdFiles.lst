@@ -2,6 +2,7 @@ authentication\AuthenticationFilter.class
 ApplicationConfig.class
 resources\UserResource.class
 authentication\Authenticated.class
+resources\AddressResource.class
 authentication\SimplePrincipal.class
 authentication\JwtAuthenticationService.class
 utils\UtilBase64Image.class

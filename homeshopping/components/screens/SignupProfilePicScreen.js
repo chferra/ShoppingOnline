@@ -44,13 +44,28 @@ export default class SignupProfilePicScreen extends Component {
           imagePath: this.state.image,
           imageData: base64Image
         })
-    }).then(function (response) {
-      //this.setState({isSigningUp: false});
+    }).then((response) => response.text()).then((text) => {
+      
+        const IdProfilePic = text;
+        alert(IdProfilePic);
 
-      if (response.status === 200)
-        navigate('SignupAddresses');
-      else
-        Alert.alert("Error", "Something went wrong. Try with an other picture");
+        fetch('http://' + global.serverIP + ':8080/ShoppingOnlineWS/resources/user/profilePicture', {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'text/plain'
+          },
+          body:
+            IdProfilePic            
+        }).then(function (secondResponse) {
+          if (secondResponse.status === 204)
+            navigate('SignupAddresses');
+          else
+            Alert.alert("Error", "Something went wrong with uploading your picture. Try again");
+
+        }).catch((error) => {
+          console.log("Api call error");
+          alert(error.message);
+        });
 
     }).catch((error) => {
       console.log("Api call error");
