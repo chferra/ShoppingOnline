@@ -190,7 +190,7 @@ const faidingBg = require("./images/fadingBg.jpg");
 
 const styles = StyleSheet.create({
     container: {
-        marginTop: '27%',
+        marginTop: '31%',
         marginLeft: '10%',
         marginRight: '10%',
         //marginTop: 100,

@@ -158,7 +158,7 @@ export default class SignupProfilePicScreen extends Component {
           <View style={{ marginTop: '10%' }} />
         </ScrollView>
 
-        <View style={{ marginTop: '53.5%' }} />
+        <View style={{ marginTop: '51%' }} />
         <Text
           style={{ fontWeight: "bold", color: "white", textAlign: 'center' }}
           onPress={() => navigate('SignupAddresses')} >
@@ -175,7 +175,7 @@ const faidingBg = require("./images/fadingBg.jpg");
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: '27%',
+    marginTop: '31%',
     marginLeft: '10%',
     marginRight: '10%',
     //marginTop: 100,

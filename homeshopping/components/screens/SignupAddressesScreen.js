@@ -11,7 +11,8 @@ import {
     Alert,
     FlatList,
     ActivityIndicator,
-    ListItem
+    ListItem,
+    Button
 } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { RadioButton } from 'react-native-paper';
@@ -24,7 +25,7 @@ export default class SignupScreen extends Component {
         nav: this.props.navigator,
         data: [],
         isLoading: true,
-        value: 1
+        primaryAddressID : -1
     }
 
     Signup = async (navigate) => {
@@ -71,7 +72,7 @@ export default class SignupScreen extends Component {
             });
     }
 
-    checkRadioButton = (primaryAddress, ID) => {
+    checkRadioButton = (primaryAddress, ID) => {        
         if (!primaryAddress) {
             Alert.alert(
                 "Confirm",
@@ -91,10 +92,11 @@ export default class SignupScreen extends Component {
                                 body:
                                     ID.toString()
                             }).then(function (response) {
-                                if (response.status === 204)
-                                    this.componentDidMount();
+                                /*if (response.status === 204)
+                                    this.setState({primaryAddressID: ID});
                                 else
-                                    Alert.alert("Error", "Something went wrong with updating your default address. Try again");
+                                    Alert.alert("Error", "Something went wrong with updating your default address. Try again");              
+                                    */                                                    
 
                             }).catch((error) => {
                                 console.log("Api call error");
@@ -105,6 +107,14 @@ export default class SignupScreen extends Component {
                 { cancelable: false }
             );
         }
+        this.setState({primaryAddressID: ID});
+    }
+
+    setPrimaryAddressID(primaryAddress, ID) {
+        if (primaryAddress && this.state.primaryAddressID == -1 || ID == this.state.primaryAddressID)
+            return 'checked';
+        
+        return 'unchecked';
     }
 
     render() {
@@ -123,7 +133,7 @@ export default class SignupScreen extends Component {
 
                     <TouchableHighlight
                         style={styles.button}
-                        onPress={() => /*this.Signup(navigate) */ navigate('SignupProfilePic')}
+                        onPress={() => navigate('SignupProfilePic') }
                         disabled={true}
                     >
 
@@ -135,7 +145,7 @@ export default class SignupScreen extends Component {
                     <Text
                         style={{ fontWeight: "bold", color: "white", textAlign: 'center' }}
                         onPress={() => navigate('Home')} >
-                        {this.state.pictureChosen ? '' : 'Skip'}
+                        Skip
                     </Text>
                 </View>
 
@@ -151,8 +161,8 @@ export default class SignupScreen extends Component {
                                 <View style={styles.addressContainer}>
                                     <RadioButton
                                         value={item.ID}
-                                        status={item.primaryAddress ? 'checked' : 'unchecked'}
-                                        onPress={() => { this.checkRadioButton(item.primaryAddress, item.ID) }}
+                                        onPress={() => this.checkRadioButton(item.primaryAddress, item.ID) }
+                                        status={ this.setPrimaryAddressID(item.primaryAddress, item.ID) }
                                     />
                                     <View style={{ paddingLeft: 10 }}>
                                         <Text style={{ fontWeight: "bold" }}>{item.addressee}</Text>
